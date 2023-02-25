@@ -99,14 +99,10 @@ Functions with argument `iter` accept a custom iterator (default is `pairs`).
     intersect       a, b, iter
     difference      a, b, iter
 
-There is a metatable injector that you could use (to inject `tbl` methods in
-a table, preserving the rest of its metatable).
-
 Help files:
 
     :help nvim-lib-tbl
     :help nvim-lib-tbl.txt
-    :help nvim-lib-inject-tables
 
 -------------------------------------------------------------------------------
 
@@ -141,7 +137,6 @@ Help files:
 
     :help nvim-lib-arr
     :help nvim-lib-arr.txt
-    :help nvim-lib-inject-tables
 
 
 -------------------------------------------------------------------------------

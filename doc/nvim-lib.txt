@@ -10,7 +10,6 @@ NVIM-LIB - TABLE OF CONTENTS                                        *nvim-lib*
     Keycodes table...................................|nvim-lib-keycodes|
   Module: tbl........................................|nvim-lib-tbl|
   Module: arr........................................|nvim-lib-tbl|
-    Inject in another metatable......................|nvim-lib-inject-tables|
     Notes about |vim-tbl_|*............................|nvim-lib-vimtbl|
 
 
@@ -176,7 +175,7 @@ MODULE - TBL                                                    *nvim-lib-tbl*
     • `arr`     specializes in arrays and sequences       |nvim-lib-arr.txt|
 
   They all take a table as first argument, so they can be used as methods with
-  the `:` notation. See |nvim-lib-inject-tables| for details.
+  the `:` notation.
 
   Differently from |vim.tbl_|* functions, they can change the table in-place,
   and {fn} is called with `(key, value)`, not only with `(value)`.
@@ -249,41 +248,6 @@ MODULE - ARR                                                    *nvim-lib-arr*
   Full documentation is at |nvim-lib-arr.txt|.
 
 
-
-INJECT THE MODULE IN ANOTHER METATABLE                *nvim-lib-inject-tables*
-------------------------------------------------------------------------------
->lua
-    local inject = require("nvim-lib.table.inject")
-<
-  Table modules can be injected in a table {t}. When doing so, the metatable
-  of {t} will be overridden, in order to return `tbl`/`arr` methods as
-  fallback.
-  
-  A copy of the old metatable of {t} is made and stored inside the new
-  metatable. `__index` becomes a function that tries to get the value from the
-  old index first, then uses `tbl` or `arr` as a fallback.
-
-  You can also revert the injection by passing a `nil` table module.
-
-  Note: I did this to experiment a bit, I don't know if it's dangerous.
-
-  Example:
->lua
-    local inject = require("nvim-lib.table.inject")
-    local tbl = require("nvim-lib").tbl
-
-    local private = { a = 1, b = 2 }
-    local mt = { __index = private }                      -- some metatable
-    local t = inject(tbl, setmetatable({9, 3, "a"}, mt))  -- inject tbl
-
-    -- now you can use this module functions as methods
-    local t2 = t:copy()
-    print(t2:empty()) -- this works
-
-    inject(nil, t2)     -- revert the injection in t2
-    print(t:empty())    -- this still works
-    print(t2:empty())   -- now this throws an error
-<
 
 
 NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
