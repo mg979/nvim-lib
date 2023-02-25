@@ -41,18 +41,18 @@ Currently provides the following functions:
     --------------------------------------------------
     put             lines, opts
     setlines        buf, lines, start, finish
-    scratch_buffer  lines, opts
+    scratchbuf      lines, opts
     commands        cmds
     augroup         name
     echo            opts, opts2
     echoerr         text
-    yes_no          question
+    yesno           question
     popup           opts
-    buf_size        buf
+    bufsize         buf
     eval            expr, throw
     try             opts
     search          pat, flags, stopline, timeout, skip
-    test_speed      cmd, cnt, title
+    testspeed       cmd, cnt, title
 
 Also:
 
@@ -83,7 +83,7 @@ Functions with argument `iter` accept a custom iterator (default is `pairs`).
     spairs          t, comp
     map             t, fn, new, iter
     filter          t, fn, new, iter
-    to_array        t
+    toarray         t
     merge           t1, t2, keep
     empty           t
     copy            t, iter
@@ -128,8 +128,8 @@ not only sequences.
     filterarr       t, fn, new
     filterseq       t, fn
     seq             t
-    is_seq          t
-    is_arr          t
+    isseq           t
+    isarr           t
     indexof         t, v
     uniq            t
     slice           t, start, finish

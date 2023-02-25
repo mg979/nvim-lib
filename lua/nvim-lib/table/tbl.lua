@@ -1,6 +1,5 @@
 local tbl = {}
 local insert = table.insert
-local arr = require("nvim-lib").arr
 
 -------------------------------------------------------------------------------
 --- Enumerate a table sorted by its keys.
@@ -71,7 +70,7 @@ end
 ---@param t table
 ---@param fn function
 ---@return table
-function tbl.to_array(t)
+function tbl.toarray(t)
   local dst = {}
   for _, v in pairs(t) do
     insert(dst, v)

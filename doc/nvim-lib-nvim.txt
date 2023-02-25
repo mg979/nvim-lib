@@ -45,7 +45,7 @@ nvim.setlines({buf}, {lines}, {start}, {finish})
 
 ------------------------------------------------------------------------------
 
-nvim.scratch_buffer({lines}, {opts})
+nvim.scratchbuf({lines}, {opts})
 
   Create a scratch buffer with lines, and set given buffer options.
 
@@ -256,7 +256,7 @@ nvim.echoerr({text})
 
 ------------------------------------------------------------------------------
 
-nvim.yes_no({question})
+nvim.yesno({question})
 
   Ask a question, return affermative answer.
 
@@ -292,7 +292,7 @@ nvim.popup({opts})
 
 ------------------------------------------------------------------------------
 
-nvim.buf_size({buf})
+nvim.bufsize({buf})
 
   Return size in bytes of buffer. In vimscript (for current buffer only) it
   would be: >
@@ -336,7 +336,7 @@ nvim.search({pattern}, {flags}, {stopline}, {timeout}, {skip})
 
 ------------------------------------------------------------------------------
 
-nvim.test_speed({cmd}, {cnt}, {title})
+nvim.testspeed({cmd}, {cnt}, {title})
 
   Test the speed of a command (or function), run for {cnt} iterations.
 

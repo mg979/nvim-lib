@@ -68,20 +68,20 @@ MODULE - NVIM                                                  *nvim-lib-nvim*
     ---------------------------------------------------------~
     `put`             lines, o
     `setlines`        buf, lines, start, finish
-    `scratch_buffer`  lines, opts
+    `scratchbuf`      lines, opts
     `commands`        cmds
     `augroup`         name
     `echo`            o, o2
     `echoerr`         text
-    `yes_no`          question
+    `yesno`           question
     `popup`           o
-    `buf_size`        buf
+    `bufsize`         buf
     `eval`            expr, throw
     `try`             o
     `search`          pat, flags, stopline, timeout, skip
-    `test_speed`      cmd, cnt, title
+    `testspeed`       cmd, cnt, title
 
-  Function descriptions are found at |nvim-lib-nvim.txt|.
+  Function documentation is found at |nvim-lib-nvim.txt|.
 
 
 
@@ -190,7 +190,7 @@ MODULE - TBL                                                    *nvim-lib-tbl*
     `spairs`       t, comp              iterator that returns sorted pairs
     `map`          t, fn, new, iter     map {t} with {fn}
     `filter`       t, fn, new, iter     filter {t} with {fn}
-    `to_array`     t                    create an array from a table
+    `toarray`      t                    create an array from a table
     `merge`        t1, t2, keep         merge tables
     `empty`        t                    check if table is empty
     `contains`     t, val               check if table contains value
@@ -213,7 +213,7 @@ MODULE - TBL                                                    *nvim-lib-tbl*
     `keys`        cf. |vim.tbl_keys|
     `values`      cf. |vim.tbl_values|
 
-  Full descriptions at |nvim-lib-tbl.txt|.
+  Full documentation is at |nvim-lib-tbl.txt|.
 
 
 
@@ -234,8 +234,8 @@ MODULE - ARR                                                    *nvim-lib-arr*
     `filterarr`       t, fn, new        filter an array with {fn}
     `filterseq`       t, fn             filter an array to a new sequence {1}
     `seq`             t                 new sequence from array, removing holes
-    `is_seq`          t                 false if there are holes in the array
-    `is_arr`          t                 false if there are non-numerical indices
+    `isseq`           t                 false if there are holes in the array
+    `isarr`           t                 false if there are non-numerical indices
     `indexof`         t, v              finds index of value in the array
     `uniq`            t                 new array with removed duplicates
     `slice`           t, s, f           new array that is a slice of the first
@@ -246,7 +246,7 @@ MODULE - ARR                                                    *nvim-lib-arr*
 
   {1} this is the closest to |vim.tbl_filter| behaviour.
 
-  Full descriptions at |nvim-lib-arr.txt|.
+  Full documentation is at |nvim-lib-arr.txt|.
 
 
 

@@ -52,7 +52,7 @@ end
 ---@param lines table
 ---@param opts table
 ---@return number
-function nvim.scratch_buffer(lines, opts)
+function nvim.scratchbuf(lines, opts)
   local bnr = api.create_buf(false, true)
   nvim.setlines(bnr, lines)
   if not opts then
@@ -203,7 +203,7 @@ end
 ---@param question string
 ---@param answers string|table
 ---@return bool
-function nvim.yes_no(question)
+function nvim.yesno(question)
   return fn.confirm(question .. "?", "&Yes\nNo") == 1
 end
 
@@ -272,7 +272,7 @@ end
 ---
 ---@param buf number
 ---@return number
-function nvim.buf_size(buf)
+function nvim.bufsize(buf)
   return api.buf_get_offset(buf or 0, api.buf_line_count(buf or 0))
 end
 
@@ -404,7 +404,7 @@ end
 ---@param f string
 ---@param cnt number
 ---@param title string
-function nvim.test_speed(f, cnt, title)
+function nvim.testspeed(f, cnt, title)
   local time = fn.reltime()
   f = type(f) == "function" and f or function()
     vim.cmd(f)

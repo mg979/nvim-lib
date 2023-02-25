@@ -114,7 +114,7 @@ end
 ---@see https://stackoverflow.com/a/25709704/7787852
 ---@param t table
 ---@return bool
-function arr.is_seq(t)
+function arr.isseq(t)
   local i = 0
   for _ in pairs(t) do
       i = i + 1
@@ -127,7 +127,7 @@ end
 --- Test if a table is an array.
 ---@param t table
 ---@return bool
-function arr.is_arr(t)
+function arr.isarr(t)
   for k in pairs(t) do
     if type(k) ~= "number" then
       return false
@@ -214,7 +214,7 @@ function arr.flatten(t)
   local result = {}
 
   local function _flatten(t_)
-    for _, v in arr.npairs(t_) do
+    for _, v in npairs(t_) do
       if type(v) == "table" then
         _flatten(v)
       elseif v then
