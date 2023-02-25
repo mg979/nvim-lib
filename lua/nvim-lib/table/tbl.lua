@@ -118,18 +118,35 @@ function tbl.empty(t)
 end
 
 -------------------------------------------------------------------------------
---- Make a shallow copy of a table.
+--- Returns true if the table contains the specified value.
 ---@param t table
+---@param value any
+---@return bool
+function tbl.contains(t, value)
+  for _, v in pairs(t) do
+    if v == value then
+      return true
+    end
+  end
+  return false
+end
+
+-------------------------------------------------------------------------------
+--- Make a shallow copy of a table. Copies metatable if `meta` is true.
+---@param t table
+---@param meta bool|nil
 ---@param iter function|nil
 ---@return table
-function tbl.copy(t, iter)
+function tbl.copy(t, meta, iter)
   local dst = {}
   for k, v in (iter or pairs)(t) do
     dst[k] = v
   end
-  local mt = getmetatable(t)
-  if mt then
-    setmetatable(dst, mt)
+  if meta ~= false then
+    local mt = getmetatable(t)
+    if mt then
+      setmetatable(dst, mt)
+    end
   end
   return dst
 end
@@ -206,48 +223,11 @@ function tbl.values(t)
 end
 
 -------------------------------------------------------------------------------
---- Flattens a hierarchy of tables into a single array containing all of the
---- values.
----@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
----@param t table
----@return table
-function tbl.flatten(t)
-  local result = {}
-
-  local function _flatten(t_)
-    for _, v in arr.npairs(t_) do
-      if type(v) == "table" then
-        _flatten(v)
-      elseif v then
-        insert(result, v)
-      end
-    end
-  end
-
-  _flatten(t)
-  return result
-end
-
--------------------------------------------------------------------------------
---- Returns true if the table contains the specified value.
----@param t table
----@param value any
----@return bool
-function tbl.contains(t, value)
-  for _, v in pairs(t) do
-    if v == value then
-      return true
-    end
-  end
-  return false
-end
-
--------------------------------------------------------------------------------
 --- Make a complete copy of a table, including any child tables it contains.
 ---@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
----@param object table
+---@param t table
 ---@return table
-function tbl.deepcopy(object)
+function tbl.deepcopy(t)
   -- keep track of already seen objects to avoid loops
   local seen = {}
 
@@ -268,7 +248,7 @@ function tbl.deepcopy(object)
     return clone
   end
 
-  return _copy(object)
+  return _copy(t)
 end
 
 -------------------------------------------------------------------------------

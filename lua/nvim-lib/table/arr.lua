@@ -9,24 +9,8 @@ local arr = {}
 local insert = table.insert
 
 -------------------------------------------------------------------------------
---- Walk the elements of an array and call the specified function for each
---- non-nil element. This works around a "feature" of the ipairs() function
---- that stops iteration at the first nil.
----@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
----@param t table
----@param func function
-function arr.foreachi(t, func)
-  for i = 1, #t do
-    local v = t[i]
-    if v then
-      func(v, i)
-    end
-  end
-end
-
--------------------------------------------------------------------------------
 --- Iterator for all elements of an array, not only those returned by ipairs
---- (because it stops at the first nil value). Alternative to arr.foreachi.
+--- (because it stops at the first nil value).
 ---@param t table
 ---@return function
 function arr.npairs(t)
@@ -218,6 +202,29 @@ function arr.extend(dst, src, at, start, finish)
     end
   end
   return dst
+end
+
+-------------------------------------------------------------------------------
+--- Flattens a hierarchy of arrays into a single array containing all of the
+--- values.
+---@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
+---@param t table
+---@return table
+function arr.flatten(t)
+  local result = {}
+
+  local function _flatten(t_)
+    for _, v in arr.npairs(t_) do
+      if type(v) == "table" then
+        _flatten(v)
+      elseif v then
+        insert(result, v)
+      end
+    end
+  end
+
+  _flatten(t)
+  return result
 end
 
 -------------------------------------------------------------------------------

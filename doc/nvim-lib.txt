@@ -8,7 +8,8 @@ NVIM-LIB - TABLE OF CONTENTS                                        *nvim-lib*
   Module: nvim.......................................|nvim-lib-nvim|
     Registers table..................................|nvim-lib-registers|
     Keycodes table...................................|nvim-lib-keycodes|
-  Modules: tbl, arr..................................|nvim-lib-tables|
+  Module: tbl........................................|nvim-lib-tbl|
+  Module: arr........................................|nvim-lib-tbl|
     Inject in another metatable......................|nvim-lib-inject-tables|
     Notes about |vim-tbl_|*............................|nvim-lib-vimtbl|
 
@@ -31,8 +32,8 @@ INTRODUCTION                                     *nvim-lib-introduction*
     the C API must be strict. But Lua API could be different...
     Instead it is not. You can't call |vim.api| functions without providing
     all optional arguments (even if they're just placeholders, 'reserved for
-    future use'). Not even lua-only functions like |vim.split()| have the
-    mercy of sparing you this pain.
+    future use'). And even lua-only functions like |vim.split()| aren't more
+    merciful.
 
 
 MODULE - API                                                    *nvim-lib-api*
@@ -144,9 +145,9 @@ nvim.keycodes[{keycode}]
 
 
 
-MODULE - TBL                                                 *nvim-lib-tables*
+MODULE - TBL                                                    *nvim-lib-tbl*
 ==============================================================================
-                                                 *nvim-lib-tbl* *nvim-lib-arr*
+
   |require| with:
 >lua
     local tbl = require("nvim-lib").tbl
@@ -162,9 +163,12 @@ MODULE - TBL                                                 *nvim-lib-tables*
   • `array`     part of a table with numerical indices, can contain holes
   • `sequence`  part of a table that can be iterated with |ipairs|
 
-  Of special note, there is a new iterator, defined in |nvim-lib-arr-npairs|.
-  It is similar to |ipairs|, but doesn't stop at `nil` keys, so it can be used
-  to loop over arrays that are not sequences.
+  Of special note, there are two new (non-global) iterators available:
+
+    • |npairs| is similar to |ipairs|, but doesn't stop at `nil` keys, so it
+             can be used to loop over arrays that are not sequences
+    • |spairs| generates a sorted order of iteration, accepts a `compare`
+             function.
 
   There are two submodules that handle tables:
 
@@ -178,112 +182,87 @@ MODULE - TBL                                                 *nvim-lib-tables*
   and {fn} is called with `(key, value)`, not only with `(value)`.
   Also, they never do table validation. You're responsible for that.
 
-    function      arguments       notes~
+  Some functions have an `iter` parameter, meaning they accept an iterator
+  function, default is |pairs| (such as |ipairs|, |npairs|, |spairs|).
+
+    function    arguments       notes~
     ---------------------------------------------------------~
-    `map`             t, fn         map {t} with {fn} in-place
-    `mapnew`          t, fn, seq    map {t} with {fn} to new table
-    `filter`          t, fn         filter {t} with {fn} in-place
-    `filternew`       t, fn, seq    filter {t} with {fn} to new table
-    `seq`             t             create a valid sequence from table
-    `merge`           t1, t2, kp    merge t2 in t1
-    `empty`           t             check if table is empty
-    `is_array`        t             check if table can be treated as an array
-    `copy`            t             shallow copy, also copies metatable
-    `get`             t, ...        faster version of |vim.tbl_get|
-    `count`           t             non-nil values in table
-    `indexof`         t, v          index of value in array, or nil
-    `keys`            t             array with all table keys
-    `values`          t             array with all table values
+    `spairs`       t, comp              iterator that returns sorted pairs
+    `map`          t, fn, new, iter     map {t} with {fn}
+    `filter`       t, fn, new, iter     filter {t} with {fn}
+    `to_array`     t                    create an array from a table
+    `merge`        t1, t2, keep         merge tables
+    `empty`        t                    check if table is empty
+    `contains`     t, val               check if table contains value
+    `copy`         t, meta, iter        shallow copy, can also copies metatable
+    `deepcopy`     t                    deep copy, also copies metatables
+    `get`          t, ...               get nested values from inside a table
+    `count`        t                    number of non-nil values in table
+    `replace`      t, val, rep, iter    replace {val} with {rep}
+    `keys`         t                    create array with table keys
+    `values`       t                    create array with table values
+    `equal`        a, b, deep           check for table equality, also deep
+    `intersect`    a, b, iter           common `k/v pairs` between two tables
+    `difference`   a, b, iter           only `k/v pairs` that belong to one table
 
   Notes:
 
-    `filter`      can create holes in a list-like table, `filternew` does not
+    `get`         cf. |vim.tbl_get|
     `empty`       cf. |vim.tbl_isempty|
     `is_array`    cf. |vim.tbl_islist|
     `keys`        cf. |vim.tbl_keys|
     `values`      cf. |vim.tbl_values|
 
-------------------------------------------------------------------------------
-
-tbl.merge({t1}, {t2}, {keep})
-
-  Merge two tables, with the second one overwriting the first one, unless
-  {keep} is true, in which case values that are present already in {t1} are
-  not overwritten, then the value from {t2} is discarded.
-
-  Both tables can be `nil`, but the return value is always a table.
-
-  Parameters: ~
-    • {t1}      (table) receiving table
-    • {t2}      (table) table to merge
-    • {keep}    (boolean) don't overwrite values
-
-  Return: ~
-    (table) merged table
-
-------------------------------------------------------------------------------
-
-tbl.mapnew({t}, {fn}, {seq})
-
-  Create a new table, where values are the result of `fn(k, v)` called on {t}
-  values.
-
-  Parameters: ~
-    • {t}     (table)     table to filter
-    • {fn}    (function)  filtering function
-    • {seq}   (bool,nil)
-              • nil       use |pairs| to iterate, never skips keys, resulting
-                          table isn't guaranteed to be a sequence, or array
-              • false     use |pairs| to iterate, only consider numerical
-                          indices, result is an array-like table
-              • true      use |ipairs| to iterate, only valid sequence is
-                          considered, result is an array-like table
-
-------------------------------------------------------------------------------
-
-tbl.filternew({t}, {fn}, {seq})
-
-  Create a new table, populated with values from {t} for which `fn(k, v)`
-  returns truthy.
-
-  Parameters: ~
-    • {t}     (table)     table to filter
-    • {fn}    (function)  filtering function
-    • {seq}   (bool,nil)
-              • nil       use |pairs| to iterate, never skips keys, resulting
-                          table isn't guaranteed to be a sequence, or array
-              • false     use |pairs| to iterate, only consider numerical
-                          indices, result is an array-like table
-              • true      use |ipairs| to iterate, only valid sequence is
-                          considered, result is an array-like table
+  Full descriptions at |nvim-lib-tbl.txt|.
 
 
 
-------------------------------------------------------------------------------
+MODULE - ARR                                                    *nvim-lib-arr*
+==============================================================================
 
-tbl.seq({t})
+  |require| with:
+>lua
+    local arr = require("nvim-lib").arr
+<
+  Functions that are more specialized in handling arrays and sequences.
 
-  Create a new array-like table from the values of t. Only considers
-  numerical indices, but also when not forming a correct sequence.
-  Result is guaranteed to be an array-like table, and a sequence without
-  holes.
+    function        arguments         notes~
+    ---------------------------------------------------------~
+    `npairs`          t                 iterator that doesn't skip nil values
+    `maparr`          t, fn, new        map an array with {fn}
+    `mapseq`          t, fn             map an array to a new sequence
+    `filterarr`       t, fn, new        filter an array with {fn}
+    `filterseq`       t, fn             filter an array to a new sequence {1}
+    `seq`             t                 new sequence from array, removing holes
+    `is_seq`          t                 false if there are holes in the array
+    `is_arr`          t                 false if there are non-numerical indices
+    `indexof`         t, v              finds index of value in the array
+    `uniq`            t                 new array with removed duplicates
+    `slice`           t, s, f           new array that is a slice of the first
+    `extend`          a, b, at, s, f    append/insert an array in another
+    `flatten`         t                 nested arrays in a linear array
+    `intersectarr`    a, b              common `values` between a and b
+    `subtractarr`     a, b              only `values` that belong to a and not b
 
-  Parameters: ~
-    • {t}     (table)     table to filter
+  {1} this is the closest to |vim.tbl_filter| behaviour.
+
+  Full descriptions at |nvim-lib-arr.txt|.
 
 
 
 INJECT THE MODULE IN ANOTHER METATABLE                   *nvim-lib-inject-tbl*
 ------------------------------------------------------------------------------
 
-  This module can be called on a metatable, and it will return the same
+  Table modules can be called on a metatable, and it will return the same
   metatable, where the `__index` method has been hacked, in order to return
   `tbl` methods as fallback. You can also pass a second argument (`true`) to
   revert the injection.
 
+  Note: I did this to experiment a bit, I don't know if it's dangerous.
+
   Example:
 >lua
-    local tbl = require("nvim-lib").tbl
+    local tbl = require("nvim-lib").tbl -- also works with `arr`
 
     local mt = {...} -- some metatable
     local t = setmetatable({}, tbl(mt)) -- inject tbl into mt
@@ -299,9 +278,13 @@ INJECT THE MODULE IN ANOTHER METATABLE                   *nvim-lib-inject-tbl*
 NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
 ------------------------------------------------------------------------------
 
+  Can be found at (|gf| over path): `$VIMRUNTIME/lua/vim/shared.lua`
+
   I think the |vim.tbl_|* stuff is horrible and should be avoided.
   Many of those functions do some sort of table validation: maybe it's needed
   for |vim.lsp| but I doubt anybody else needs it this bad.
+  In some cases at least, this same validation makes also obligatory
+  parameters that could be optional.
   Some functions are intended to work only with arrays, and it's not always
   documented. An example below.
 
@@ -315,7 +298,9 @@ NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
 
   So it's not really a filtering function, it's something entirely different.
   It has its uses: it just isn't what you'd expect it to be. And what it
-  actually is, isn't documented.
+  actually is, isn't documented. In Lua tables are very flexible and it's easy
+  to mess things up simply by using the wrong iterator function for your
+  use-case.
 
   |vim.tbl_isempty()| just checks `next(t) == nil`, as it should, but it does
   table validation. Totally useless. Spare yourself a table lookup, a function

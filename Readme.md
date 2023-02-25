@@ -59,6 +59,10 @@ Also:
     nvim.reg        table to access vim registers
     nvim.keycodes   table with on-demand termcodes generation
 
+Help file:
+
+    :help nvim-lib-nvim
+
 
 -------------------------------------------------------------------------------
 
@@ -87,7 +91,7 @@ Functions with argument `iter` accept a custom iterator (default is `pairs`).
     count           t
     replace         t, val, rep, iter
     keys            t
-    keys            t
+    values          t
     flatten         t
     contains        t, val
     deepcopy        object
@@ -97,6 +101,12 @@ Functions with argument `iter` accept a custom iterator (default is `pairs`).
 
 There is a metatable injector that you could use (to inject `tbl` methods in
 a table, preserving the rest of its metatable).
+
+Help files:
+
+    :help nvim-lib-tbl
+    :help nvim-lib-tbl.txt
+    :help nvim-lib-inject-tables
 
 -------------------------------------------------------------------------------
 
@@ -112,7 +122,6 @@ not only sequences.
 
     function        arguments
     ------------------------------------
-    foreachi        t, func
     npairs          t
     maparr          t, fn, new
     mapseq          t, fn
@@ -127,6 +136,12 @@ not only sequences.
     extend          dst, src, at, start, finish
     intersectarr    a, b
     subtractarr     a, b
+
+Help files:
+
+    :help nvim-lib-arr
+    :help nvim-lib-arr.txt
+    :help nvim-lib-inject-tables
 
 
 -------------------------------------------------------------------------------
