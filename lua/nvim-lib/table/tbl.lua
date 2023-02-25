@@ -314,46 +314,4 @@ function tbl.difference(a, b, iter)
   return result
 end
 
--------------------------------------------------------------------------------
---- Metatable injector, called when the module is called as a function.
---- The metatable.__index is copied to metatable.__oldindex, then replaced with
---- a function that tries to get the value from the old index first, then uses
---- tbl as a fallback. I don't really know how risky this whole thing is.
---- Returns the modified original metatable.
----@param mt table
----@param remove bool
----@return table
-local function tbl_call(_, mt, remove)
-  -- remove the hack by restoring the original __index method
-  if remove then
-    if not mt.__oldindex then
-      return mt
-    end
-    mt.__index = mt.__oldindex
-    mt.__oldindex = nil
-    return mt
-  end
-  -- don't overwrite more than once
-  mt.__oldindex = mt.__oldindex or mt.__index
-  -- replace old metatable __index with one that looks also in tbl
-  mt.__index = function(t, k)
-    local base
-    if mt.__oldindex then
-      if type(mt.__oldindex) == "table" then
-        base = mt.__oldindex[k]
-      else
-        base = mt.__oldindex(t, k)
-      end
-    end
-    return base or tbl[k]
-  end
-  -- return modified metatable
-  return mt
-end
-
--------------------------------------------------------------------------------
--- use tbl as fallback metatable for a table, by calling this module in
--- setmetatable(), we'll inject it in another metatable
-return setmetatable(tbl, {
-  __call = tbl_call,
-})
+return tbl
