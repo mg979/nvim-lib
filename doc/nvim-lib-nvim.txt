@@ -1,0 +1,352 @@
+*nvim-lib-nvim.txt* `nvim` module of |nvim-lib|
+>lua
+    local nvim = require("nvim-lib").nvim
+<
+
+MODULE FUNCTIONS
+==============================================================================
+
+nvim.put({lines}, {options})
+
+  Similar to the `:put` ex command, accepts a table of lines and the same
+  options as for |nvim_put()|, plus a `reindent` option.
+
+  Parameters: ~
+    • {lines}   (table) Lines to insert
+    • {options} (table) Options
+        • type      (string)    "b", "c", "l", ""
+        • after     (boolean)
+        • follow    (boolean)
+        • reindent  (boolean)
+
+  See also: ~
+    |nvim_put()|
+
+------------------------------------------------------------------------------
+
+nvim.setlines({buf}, {lines}, {start}, {finish})
+
+  Set lines for given buffer. Lines are 1-indexed. Default is:
+
+  1. if nor `start` nor `finish` are given, whole buffer is replaced
+  2. if only `start` is given, a single line is replaced, but the replacement
+     can span over multiple lines
+  3. if both are given, lines from `start` to `finish` (inclusive) are replaced
+
+  Parameters: ~
+    • {buf}     (number)
+    • {lines}   (string|table) If a string, it will be split at newlines.
+    • {start}   (number) starting line (1-indexed)
+    • {finish}  (number) ending line (inclusive)
+
+  See also: ~
+    |nvim_buf_set_lines()|
+    |nvim_buf_set_text()|
+
+------------------------------------------------------------------------------
+
+nvim.scratch_buffer({lines}, {opts})
+
+  Create a scratch buffer with lines, and set given buffer options.
+
+  Parameters: ~
+    • {lines}    (table|string)   buffer text
+    • {opts}     (table)          with `{option = value}` pairs
+                                  if empty, |bufhidden| is set to "wipe"
+  Return: ~
+    (number) buffer number
+
+  See also: ~
+    |nvim_create_buf()|
+
+------------------------------------------------------------------------------
+
+nvim.commands({cmds})
+
+  Create any number of user commands from a table, where the keys are the
+  commands names, `value.cmd` is the callback (function) or command (string),
+  the rest are options.
+  Synonims of `value.cmd`, also accepted with the same meaning are:
+    • `value[1]`
+    • `value.command`
+
+  Example:
+>lua
+    nvim.commands {
+
+      UserCommandName = {
+        cmd = lua_callback,
+        nargs = 1,
+        complete = complete_func,
+        desc = "Command description here.",
+      },
+
+      AnotherUserCommandName = {...},
+    }
+<
+  Parameters: ~
+    • {cmds}    (table) table with user commands definitions
+
+  See also: ~
+    |nvim_create_user_command()|
+
+------------------------------------------------------------------------------
+
+nvim.augroup({name})
+
+  Create an |augroup|, to be filled with autocommands to be declared in the
+  returning function. The autocommands belong to the defined augroup. The id
+  of the augroup is the return value of the returning function. Example:
+>lua
+    local aug_id = nvim.augroup(aug_name) {
+      {
+        {"BufNewFile", "BufReadPost"},
+        command = ":UserCommandToRun"
+      },
+      ...
+    }
+<
+  You can see that there are two function calls, one after the other. The
+  second one is the function returned by `nvim.augroup`, and it's a table to be
+  filled with autocommands definitions, as you would pass them to
+  |nvim_create_autocmd|.
+
+  Parameters: ~
+    • {name}    (string) Name of the autogroup
+
+  Return: ~
+    (function({table}))   Function accepting a list-like table with
+                          autocommands definitions.
+  See also: ~
+    |nvim_create_augroup()|
+    |nvim_create_autocmd()|
+
+------------------------------------------------------------------------------
+
+nvim.try({options})
+
+  Emulate a try/catch/finally block. Example:
+>lua
+    nvim.try {
+      what = fn_to_test,
+
+      catch = {
+        { pat1, callback_if_pat1_matches_error }, -- => (error)
+        { pat2, callback_if_pat2_matches_error }, -- => (error)
+        ...
+      },
+
+      finally = callback -- => (status, result, caught)
+    }
+<
+  Patterns in o.catch are tried sequentially, only one can be caught. If an
+  exception isn't caught, an error will occur, but `finally()` block will
+  still be executed.
+
+  If an exception was caught, `finally()` receives as third argument a table
+  with:
+    1. the caught pattern
+    2. the result of the catch callback for that index
+
+  Return: ~
+    (boolean, any) status, result of pcall.
+
+  Example: ~
+
+    Running this will throw an exception when pressing the letter "o", unless
+    the commented line is uncommented.
+>lua
+    local nvim = require("nvim-lib").nvim
+
+    nvim.try {
+      what = function()
+        local answer = vim.fn.getchar()
+        if answer < 100 then
+          error("You did your last mistake.")
+        elseif answer < 110 then
+          error("What the hell???")
+        elseif answer < 120 then
+          error("You won't catch this one.")
+        end
+      end,
+
+      catch = {
+        { "mistake", function(err) print(err) return "Very lucky." end },
+        { "hell", function(err) print(err) return "But it won't last." end },
+        -- { ".", function(err) print(err) return "With a trick." end }, -- this catches everything
+      },
+
+      finally = function(ok, result, caught)
+        if not ok and not caught then
+          print("There's going to be trouble.")
+        elseif not ok then
+          print("We've been lucky this time. " .. (caught[2] or ""))
+        else
+          print("All's well what ends well.")
+        end
+      end,
+    }
+<
+
+------------------------------------------------------------------------------
+
+nvim.echo({o}, {o2})
+
+  Print some text in the command line. Accepts one or two arguments.
+
+  The second argument is only considered if the first argument is either
+  a string, or an array.
+
+  In this case the first argument can be:
+    • a string
+    • a list of lines
+    • a list of chunks (as with |nvim_echo()|).
+
+  And the second argument can be:
+    • a table with `history` and `highlight` options
+    • a string, and it will be the `highlight`
+    • a boolean, and it will be the `history` option
+
+  Examples: >
+    nvim.echo(vim.fn.system("ls"))
+    nvim.echo(vim.fn.systemlist("ls"), { highlight = "String" })
+    nvim.echo(vim.fn.systemlist("ls"), "String") -- same
+    nvim.echo(vim.fn.systemlist("ls"), true) -- record message in history
+    nvim.echo({{"1"}, {"2", "Error"}}, { highlight = "String" })
+<
+  The other form is with a single table argument, with keys:
+    • `text`        (string)    text as string
+    • `lines`       (table)     text as table of lines
+    • `chunks`      (table)     text as table of chunks
+    • `history`     (bool)      record in message history
+    • `highlight`   (string)    default highlight
+
+  When using `o.lines` or `o.text`, they will all have the same highlight, the
+  one defined by `o.highlight` (or "None").
+
+  Using `o.chunks` follows the same rules as with |nvim_echo|, except that
+  default highlight (`o.highlight`) will be used where highlight is omitted.
+
+  Example: >
+    -- the highlight for the first chhunk will be "String"
+    nvim.echo({ chunks = {{"1"}, {"2", "Error"}}, highlight = "String" })
+<
+  Parameters: ~
+    • {o}  (table)  Either:
+           (string)   • string
+                      • list of lines
+                      • list of chunks
+                      • associative table, including options
+    • {o2} (table)  Options, in case {o} is not an associative table
+
+  See also: ~
+    |nvim_echo()|
+
+------------------------------------------------------------------------------
+
+nvim.echoerr({text})
+
+  What it does is just:
+>lua
+  nvim.echo(text, { highlight = "Error", history = true })
+<
+  Parameters: ~
+    • {text}  (table)  Same as for nvim.echo().
+              (string)
+
+------------------------------------------------------------------------------
+
+nvim.yes_no({question})
+
+  Ask a question, return affermative answer.
+
+  Parameters: ~
+    • {question}  (string)  Question, without question mark.
+
+  Return: ~
+    (boolean)
+
+------------------------------------------------------------------------------
+
+nvim.popup({opts})
+
+  Relatively minimal popup displayer, what could be done in <50 LOC.
+  The buffer is created as scratch if not given, and wiped afterwards.
+
+  Default position is `at cursor`, width is `80`, height is `#lines`.
+
+  Parameters: ~
+    • {opts} (table)
+        • {1}       (table,string)  text
+        • {enter}   (boolean)       enter buffer or not
+        • {buf}     (number)        buffer number
+        • {bufopts} (table)         additional buffer options
+        • {winopts} (table)         additional window options
+        • {...}     (...)           options for |nvim_open_win()| are given in
+                                    the same table.
+
+  Example: ~
+>lua
+      nvim.popup({ text, enter = true, border = "rounded" })
+<
+
+------------------------------------------------------------------------------
+
+nvim.buf_size({buf})
+
+  Return size in bytes of buffer. In vimscript (for current buffer only) it
+  would be: >
+    line2byte(line('$') + 1) - 1
+<
+  Return: ~
+    (number)
+
+------------------------------------------------------------------------------
+
+nvim.eval({expr}, {throw})
+
+  |pcall|-ed version of |vim.fn.eval()|. Doesn't throw the error, unless second
+  argument is `true`.
+
+  Parameters: ~
+    • {expr}    (string)  vimscript expression
+    • {throw}   (boolean) actually throw an error or not
+
+------------------------------------------------------------------------------
+
+nvim.search({pattern}, {flags}, {stopline}, {timeout}, {skip})
+
+  Alternative to vim.fn.search that uses `very-magic` by default, calls
+  vim.fn.searchpos, and supports some additional flags:
+
+    `m` - magic search
+    `M` - nomagic search
+    `V` - very nomagic search
+    `i` - case insensitive search
+    `I` - case sensitive search
+
+  The pattern can be a table, that will be concatenated with "\|".
+
+  Return: ~
+    (nil)       if the pattern isn't found
+    (row, col)  position of found pattern
+
+  See also: ~
+    |search()|
+
+------------------------------------------------------------------------------
+
+nvim.test_speed({cmd}, {cnt}, {title})
+
+  Test the speed of a command (or function), run for {cnt} iterations.
+
+  Parameters: ~
+    • {cmd}     (string,function)   command or function to benchmark
+    • {cnt}     (number)            number of iterations, default 100
+    • {title}   (string)            title for test, shown in result
+
+
+
+
+==============================================================================
+vim:tw=78:ts=2:sw=2:ft=help:norl:et:fen:fdl=0:

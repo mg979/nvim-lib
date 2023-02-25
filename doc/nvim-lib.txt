@@ -1,0 +1,340 @@
+*nvim-lib.txt* An user-friendly lua API for Neovim
+
+NVIM-LIB - TABLE OF CONTENTS                                        *nvim-lib*
+==============================================================================
+
+  Introduction.......................................|nvim-lib-introduction|
+  Module: api........................................|nvim-lib-api|
+  Module: nvim.......................................|nvim-lib-nvim|
+    Registers table..................................|nvim-lib-registers|
+    Keycodes table...................................|nvim-lib-keycodes|
+  Modules: tbl, arr..................................|nvim-lib-tables|
+    Inject in another metatable......................|nvim-lib-inject-tables|
+    Notes about |vim-tbl_|*............................|nvim-lib-vimtbl|
+
+
+
+INTRODUCTION                                     *nvim-lib-introduction*
+==============================================================================
+
+  Neovim API is more powerful than Vim API. But this comes at the price of:
+
+  - redundance: there are lots of ways to do similar (or even the same) thing,
+    and many of the new ways aren't better than the old ones. Sometimes new
+    functions appear, that try to remedy deficiencies of older functions, and
+    this can happen repeatedly (|nvim_command|, |nvim_exec|, |nvim_cmd|...).
+    This is somewhat expected since it's not even reached version 1, but
+    currently it's a problem.
+
+  - user unfriendliness: vim API mostly supports optional parameters. Neovim
+    API doesn't, for its own reasons. I'm not arguing with the thought that
+    the C API must be strict. But Lua API could be different...
+    Instead it is not. You can't call |vim.api| functions without providing
+    all optional arguments (even if they're just placeholders, 'reserved for
+    future use'). Not even lua-only functions like |vim.split()| have the
+    mercy of sparing you this pain.
+
+
+MODULE - API                                                    *nvim-lib-api*
+==============================================================================
+
+  Must be |require|d with:
+>lua
+    local api = require("nvim-lib").api
+<
+  Then you can call functions like this:
+>lua
+    api.win_close(...) -- instead of vim.api.nvim_win_close(...)
+<
+  There are no other differences, nor any performance impact. Names are still
+  perfectly searchable with `K` key (unless it is replaced by `lsp`, for
+  example).
+
+  Extra arguments for these functions are NOT optional.
+
+
+
+MODULE - NVIM                                                  *nvim-lib-nvim*
+==============================================================================
+                                                           |nvim-lib-nvim.txt|
+  |require| with:
+>lua
+    local nvim = require("nvim-lib").nvim
+<
+  Extra arguments for these functions are generally optional.
+
+    function        arguments~
+    ---------------------------------------------------------~
+    `put`             lines, o
+    `setlines`        buf, lines, start, finish
+    `scratch_buffer`  lines, opts
+    `commands`        cmds
+    `augroup`         name
+    `echo`            o, o2
+    `echoerr`         text
+    `yes_no`          question
+    `popup`           o
+    `buf_size`        buf
+    `eval`            expr, throw
+    `try`             o
+    `search`          pat, flags, stopline, timeout, skip
+    `test_speed`      cmd, cnt, title
+
+  Function descriptions are found at |nvim-lib-nvim.txt|.
+
+
+
+REGISTERS TABLE                                           *nvim-lib-registers*
+------------------------------------------------------------------------------
+
+nvim.reg[{register}]
+
+  Table that can be accessed by register:
+>lua
+    R = nvim.reg['"']           -- read register
+    r, t, w = nvim.reg('"')     -- read register, type, width if block type
+    nvim.reg['"'] = text        -- set register to some text
+    nvim.reg('"', text, "b")    -- set register to text, and set register type
+<
+  `nvim.reg` also understands the following expressions:
+        key                same as~
+      nvim.reg.unnamed   |getreg|('"')
+      nvim.reg.delete    |getreg|('-')
+      nvim.reg.colon     |getreg|(':')
+      nvim.reg.dot       |getreg|('.')
+      nvim.reg.star      |getreg|('*')
+      nvim.reg.plus      |getreg|('+')
+      nvim.reg.file      |getreg|('%')
+      nvim.reg.alt       |getreg|('#')
+      nvim.reg.eval      |getreg|('=')
+      nvim.reg.expr      |getreg|('=', 1)
+
+  When setting a register, the following rules are applied:
+
+     • {string}   type is "c", or "l" if it terminates with "\n"
+     • {table}    type is "l"
+
+  You must use the function form to set the type as block. Also remember that
+  some registers are read-only.
+
+  See also: ~
+    |getreg()|, |getregtype()|, |setreg()|, |getreginfo()|
+
+
+
+KEYCODES TABLE                                             *nvim-lib-keycodes*
+------------------------------------------------------------------------------
+
+nvim.keycodes[{keycode}]
+
+  Lua doesn't handle naturally keycodes like <CR>, <BS> in the same way that
+  vimscript does. To make them work in Lua, they must be translated in
+  terminal codes first with |nvim_replace_termcodes()|.
+
+  With this table you get the translated keycodes, you can use either the
+  keycode notation (<key>) or a "stringified" notation:
+>lua
+    local k = nvim.keycodes
+    local CR, Tab = k.CR, k.Tab -- also: k['<CR>'], k['<Tab>']
+    local co, mj = k.CtrlO, k.Metaj -- MetaJ and Metaj are different!
+    local cp, mK = k['<C-p>'], k['<M-K>'] -- case can matter
+<
+  Note: case doesn't matter for keycodes like <CR> or <C-O>, but it matters
+  for the <M-?> keycodes, since <M-a> and <M-A> are different keys.
+
+
+
+MODULE - TBL                                                 *nvim-lib-tables*
+==============================================================================
+                                                 *nvim-lib-tbl* *nvim-lib-arr*
+  |require| with:
+>lua
+    local tbl = require("nvim-lib").tbl
+    local arr = require("nvim-lib").arr
+<
+  In Lua, handling tables is slightly complicated by the fact that a table can
+  be at the same time associative (keys are string) and array-like (with
+  numerical indices), so they can behave like both.
+
+  Note: when describing the module, I'll only talk about:
+
+  • `table`     can be anything
+  • `array`     part of a table with numerical indices, can contain holes
+  • `sequence`  part of a table that can be iterated with |ipairs|
+
+  Of special note, there is a new iterator, defined in |nvim-lib-arr-npairs|.
+  It is similar to |ipairs|, but doesn't stop at `nil` keys, so it can be used
+  to loop over arrays that are not sequences.
+
+  There are two submodules that handle tables:
+
+    • `tbl`     handles all kinds of tables               |nvim-lib-tbl.txt|
+    • `arr`     specializes in arrays and sequences       |nvim-lib-arr.txt|
+
+  They all take a table as first argument, so they can be used as methods with
+  the `:` notation. See |nvim-lib-inject-tbl| for details.
+
+  Differently from |vim.tbl_|* functions, they can change the table in-place,
+  and {fn} is called with `(key, value)`, not only with `(value)`.
+  Also, they never do table validation. You're responsible for that.
+
+    function      arguments       notes~
+    ---------------------------------------------------------~
+    `map`             t, fn         map {t} with {fn} in-place
+    `mapnew`          t, fn, seq    map {t} with {fn} to new table
+    `filter`          t, fn         filter {t} with {fn} in-place
+    `filternew`       t, fn, seq    filter {t} with {fn} to new table
+    `seq`             t             create a valid sequence from table
+    `merge`           t1, t2, kp    merge t2 in t1
+    `empty`           t             check if table is empty
+    `is_array`        t             check if table can be treated as an array
+    `copy`            t             shallow copy, also copies metatable
+    `get`             t, ...        faster version of |vim.tbl_get|
+    `count`           t             non-nil values in table
+    `indexof`         t, v          index of value in array, or nil
+    `keys`            t             array with all table keys
+    `values`          t             array with all table values
+
+  Notes:
+
+    `filter`      can create holes in a list-like table, `filternew` does not
+    `empty`       cf. |vim.tbl_isempty|
+    `is_array`    cf. |vim.tbl_islist|
+    `keys`        cf. |vim.tbl_keys|
+    `values`      cf. |vim.tbl_values|
+
+------------------------------------------------------------------------------
+
+tbl.merge({t1}, {t2}, {keep})
+
+  Merge two tables, with the second one overwriting the first one, unless
+  {keep} is true, in which case values that are present already in {t1} are
+  not overwritten, then the value from {t2} is discarded.
+
+  Both tables can be `nil`, but the return value is always a table.
+
+  Parameters: ~
+    • {t1}      (table) receiving table
+    • {t2}      (table) table to merge
+    • {keep}    (boolean) don't overwrite values
+
+  Return: ~
+    (table) merged table
+
+------------------------------------------------------------------------------
+
+tbl.mapnew({t}, {fn}, {seq})
+
+  Create a new table, where values are the result of `fn(k, v)` called on {t}
+  values.
+
+  Parameters: ~
+    • {t}     (table)     table to filter
+    • {fn}    (function)  filtering function
+    • {seq}   (bool,nil)
+              • nil       use |pairs| to iterate, never skips keys, resulting
+                          table isn't guaranteed to be a sequence, or array
+              • false     use |pairs| to iterate, only consider numerical
+                          indices, result is an array-like table
+              • true      use |ipairs| to iterate, only valid sequence is
+                          considered, result is an array-like table
+
+------------------------------------------------------------------------------
+
+tbl.filternew({t}, {fn}, {seq})
+
+  Create a new table, populated with values from {t} for which `fn(k, v)`
+  returns truthy.
+
+  Parameters: ~
+    • {t}     (table)     table to filter
+    • {fn}    (function)  filtering function
+    • {seq}   (bool,nil)
+              • nil       use |pairs| to iterate, never skips keys, resulting
+                          table isn't guaranteed to be a sequence, or array
+              • false     use |pairs| to iterate, only consider numerical
+                          indices, result is an array-like table
+              • true      use |ipairs| to iterate, only valid sequence is
+                          considered, result is an array-like table
+
+
+
+------------------------------------------------------------------------------
+
+tbl.seq({t})
+
+  Create a new array-like table from the values of t. Only considers
+  numerical indices, but also when not forming a correct sequence.
+  Result is guaranteed to be an array-like table, and a sequence without
+  holes.
+
+  Parameters: ~
+    • {t}     (table)     table to filter
+
+
+
+INJECT THE MODULE IN ANOTHER METATABLE                   *nvim-lib-inject-tbl*
+------------------------------------------------------------------------------
+
+  This module can be called on a metatable, and it will return the same
+  metatable, where the `__index` method has been hacked, in order to return
+  `tbl` methods as fallback. You can also pass a second argument (`true`) to
+  revert the injection.
+
+  Example:
+>lua
+    local tbl = require("nvim-lib").tbl
+
+    local mt = {...} -- some metatable
+    local t = setmetatable({}, tbl(mt)) -- inject tbl into mt
+    -- now you can use this module functions as methods
+    local t2 = t:copy()
+    -- revert the injection
+    tbl(mt, true)
+    -- now this throws an error
+    print(t:empty())
+<
+
+
+NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
+------------------------------------------------------------------------------
+
+  I think the |vim.tbl_|* stuff is horrible and should be avoided.
+  Many of those functions do some sort of table validation: maybe it's needed
+  for |vim.lsp| but I doubt anybody else needs it this bad.
+  Some functions are intended to work only with arrays, and it's not always
+  documented. An example below.
+
+  |vim.tbl_filter()| behaves differently from what one could understand
+  from reading the documentation:
+  - it creates a new table
+  - it assumes {table} is an array
+  - it will actually FLATTEN an associative table to an array with the
+    filtered values (in the copy of course)!
+  - while doing so, it uses `pairs`, so that information about keys is lost.
+
+  So it's not really a filtering function, it's something entirely different.
+  It has its uses: it just isn't what you'd expect it to be. And what it
+  actually is, isn't documented.
+
+  |vim.tbl_isempty()| just checks `next(t) == nil`, as it should, but it does
+  table validation. Totally useless. Spare yourself a table lookup, a function
+  call, an underscore AND a damn table validation, and type also less
+  characters (13 vs. 17, both bring bad luck unfortunately).
+
+  In these modules you find variants of all those functions that don't do any
+  table validation, and are a bit faster when possible.
+  Of course you can check them and if you find mistake please file an issue.
+
+
+
+CREDITS AND LICENSE
+==============================================================================
+
+Bram Moolenar for Vim
+Neovim developers
+
+MIT license
+
+==============================================================================
+vim:tw=78:ts=2:sw=2:ft=help:norl:et:fen:fdl=0:
