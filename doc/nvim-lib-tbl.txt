@@ -1,0 +1,280 @@
+*nvim-lib-tbl.txt* `tbl` module of |nvim-lib|
+>lua
+    local tbl = require("nvim-lib").tbl
+<
+
+MODULE FUNCTIONS
+==============================================================================
+
+*tbl.spairs* ({t}, {comp})
+
+  Iterator that enumerates a table sorted by its keys.
+  If {comp} is given, it must be a function to be used by |table.sort|.
+
+  Parameters:~
+    • {t} table
+    • {comp} function,nil
+
+  Return:~
+    (function)
+
+  See also:~
+      https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*tbl.map* ({t}, {fn}, {new}, {iter})
+
+  Map a table in place (or to new table) with {fn}.
+  The function is called with (key, value) as arguments.
+  The default iterator is |pairs|, but it can be overridden with the `iter`
+  argument. Other useful iterators: |ipairs|, `arr.npairs`.
+  Note: this function can create holes in an array.
+
+  Parameters:~
+    • {t} table
+    • {fn} function
+    • {new} boolean,nil
+    • {iter} function,nil
+
+  Return:~
+      (table)
+
+------------------------------------------------------------------------------
+
+*tbl.filter* ({t}, {fn}, {new}, {iter})
+
+  Filter a table in place (or to new table) with {fn}.
+  The function is called with (key, value) as arguments.
+  The default iterator is |pairs|, but it can be overridden with the `iter`
+  argument. Other useful iterators: |ipairs|, `arr.npairs`.
+  Note: this function can create holes in an array.
+
+  Parameters:~
+    • {t} table
+    • {fn} function
+    • {new} boolean,nil
+    • {iter} function,nil
+
+  Return:~
+      (table)
+
+------------------------------------------------------------------------------
+
+*tbl.toarray* ({t})
+
+  Create a new array from the values of {t}.
+
+  Parameters:~
+    • {t} table
+    • {fn} function
+
+  Return:~
+    (table)
+
+------------------------------------------------------------------------------
+
+*tbl.merge* ({t1}, {t2}, {keep})
+
+  Merge two tables, with the second one overwriting the first one, unless
+  {keep} is true, in which case values that are present already in {t1} are
+  not overwritten, then the value from {t2} is discarded.
+  If {keep} is "error", an error is thrown when trying to overwrite an
+  existing key.
+
+  Both tables can be `nil`, but the return value is always a table.
+
+  Parameters: ~
+    • {t1}      (table) receiving table
+    • {t2}      (table) table to merge
+    • {keep}    (boolean) don't overwrite values
+
+  Return: ~
+    (table) merged table
+
+------------------------------------------------------------------------------
+
+*tbl.empty* ({t})
+
+  Test if table {t} is empty.
+
+  Parameters:~
+    • {t} table
+
+  Return:~
+    (boolean)
+
+------------------------------------------------------------------------------
+
+*tbl.contains* ({t}, {value})
+
+  Returns `true` if the table {t} contains the specified value.
+
+  Parameters:~
+    • {t} table
+    • {value} any
+
+  Return:~
+    (boolean)
+
+------------------------------------------------------------------------------
+
+*tbl.copy* ({t}, {meta}, {iter})
+
+  Make a shallow copy of a table. Copies metatable if {meta} is true.
+
+  Parameters:~
+    • {t} table
+    • {meta} boolean,nil
+    • {iter} function,nil
+
+  Return:~
+    (table)
+
+------------------------------------------------------------------------------
+
+*tbl.get* ({t}, {...})
+
+  Get the value of a nested key inside a table.
+  Multiple nested keys can be passed as argument, they must all be found one
+  inside the other, until the last is reached, then its value is returned.
+
+  Parameters:~
+    • {t} table: table to traverse
+    • {...} strings: names of nested keys to look for in the table
+
+  Return:~
+    (any) the value of the last nested key
+
+  See also: ~
+    |vim.tbl_get()|
+
+------------------------------------------------------------------------------
+
+*tbl.count* ({t})
+
+  Counts the number of non-nil values in table {t}.
+
+  Parameters:~
+    • {t} table
+
+  Return:~
+    (number)
+
+  See also:~
+    https://github.com/Tieske/Penlight/blob/master/lua/pl/tablex.lua
+
+------------------------------------------------------------------------------
+
+*tbl.replace* ({t}, {val}, {rep}, {iter})
+
+  Replace all instances of {value} with {replacement} in an table.
+  Default iterator is |pairs|, but another can be passed in the {iter}
+  parameter.
+
+  Parameters:~
+    • {value}
+    • {replacement}
+    • {iter} function,nil
+
+------------------------------------------------------------------------------
+
+*tbl.keys* ({t})
+
+  Return an array with all keys used in table {t}.
+
+  Parameters:~
+    • {t} table
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*tbl.values* ({t})
+
+  Return an array with all values used in table {t}.
+
+  Parameters:~
+    • {t} table
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*tbl.deepcopy* ({t})
+
+  Make a complete copy of a table, including any child tables it contains.
+
+  Parameters:~
+    • {t} table
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*tbl.equal* ({a}, {b}, {deep})
+
+  Compares two tables. If {deep} is false, it doesn't check the content of
+  nested tables, it will only check for object identity (shallow comparison).
+
+  Parameters:~
+    • {a} table
+    • {b} table
+    • {deep} boolean
+
+  Return:~
+    (boolean)
+
+------------------------------------------------------------------------------
+
+*tbl.intersect* ({a}, {b}, {iter})
+
+  Set containing those elements that are in both tables A and B.
+  Default iterator is |pairs|, but another can be passed in the {iter}
+  parameter.
+
+  Parameters:~
+    • {a} table
+    • {b} table
+    • {iter} function,nil
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*tbl.difference* ({a}, {b}, {iter})
+
+  Set containing those elements that are in table A but not in table B.
+  Default iterator is |pairs|, but another can be passed in the {iter}
+  parameter.
+
+  Parameters:~
+    • {a} table
+    • {b} table
+    • {iter} function,nil
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+
+==============================================================================
+vim:tw=78:ts=2:sw=2:ft=help:norl:et:fen:fdl=0:

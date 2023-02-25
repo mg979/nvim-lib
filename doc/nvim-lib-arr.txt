@@ -1,0 +1,229 @@
+*nvim-lib-arr.txt* `arr` module of |nvim-lib|
+>lua
+    local arr = require("nvim-lib").arr
+<
+
+MODULE FUNCTIONS
+==============================================================================
+
+*arr.npairs* ({t})
+
+  Iterator for all elements of an array, not only those returned by ipairs
+  (because it stops at the first nil value).
+
+  Parameters:~
+    • {t} (table)
+
+  Return:~
+    (function)
+
+  See also:~
+      https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*arr.maparr* ({t}, {fn}, {new})
+
+  Map an array in place (or to new table) with {fn}.
+  {fn} is called with (key, value) as arguments.
+  Note: this function can create holes in an array.
+
+  Parameters:~
+    • {fn}  (function)
+    • {t}   (table)
+    • {new} (bool)
+  Return:~
+      (table)
+
+------------------------------------------------------------------------------
+
+*arr.mapseq* ({t}, {fn})
+
+  Map an array with {fn}. Produce a new sequence.
+  {fn} is called with (key, value) as arguments.
+
+  Parameters:~
+    • {fn} (function)
+    • {t}  (table)
+
+  Return:~
+      (table)
+
+------------------------------------------------------------------------------
+
+*arr.filterarr* ({t}, {fn}, {new})
+
+  Filter an array in place (or to new table) with {fn}.
+  {fn} is called with (key, value) as arguments.
+  Note: this function can create holes in an array.
+
+  Parameters:~
+    • {fn}  (function)
+    • {t}   (table)
+    • {new} (bool)
+
+  Return:~
+    (table)
+
+------------------------------------------------------------------------------
+
+*arr.filterseq* ({t}, {fn})
+
+  Filter an array with {fn}. Produce a new sequence.
+  {fn} is called with (key, value) as arguments.
+
+  Parameters: ~
+    • {fn} (function)
+    • {t}  (table)
+
+  Return: ~
+    (table) merged table
+
+------------------------------------------------------------------------------
+
+*arr.seq* ({t})
+
+  Create a new sequence from an array, by removing holes.
+
+  Parameters:~
+    • {t} (table)
+
+  Return:~
+    (boolean)
+
+------------------------------------------------------------------------------
+
+*arr.isseq* ({t})
+
+  Test if a table is a sequence (pure array without holes).
+  Returns false if there are non-numeric keys.
+
+  Parameters:~
+    • {t} (table)
+
+  Return:~
+    (boolean)
+
+------------------------------------------------------------------------------
+
+*arr.isarr* ({t})
+
+  Test if a table is a pure array.
+  Returns false if there are non-numeric keys.
+
+  Parameters:~
+    • {t} (table)
+
+  Return:~
+    (table)
+
+------------------------------------------------------------------------------
+
+*arr.indexof* ({t}, {v})
+
+  If an array contains a value, return its index.
+  Return nil if the array doesn't contain the value.
+
+  Parameters:~
+    • {t} (table)
+    • {v} (any)
+
+  Return:~
+    (any) the value of the last nested key
+
+  See also: ~
+    |vim.arr_get()|
+
+------------------------------------------------------------------------------
+
+*arr.uniq* ({t})
+
+  Returns a copy of an array with all duplicate elements removed.
+
+  Parameters:~
+    • {t} (table)
+
+  Return:~
+    (number)
+
+  See also:~
+    https://github.com/Tieske/Penlight/blob/master/lua/pl/tablex.lua
+
+------------------------------------------------------------------------------
+
+*arr.slice* ({t}, {start}, {finish})
+
+  Creates a copy of an array containing only elements from {start} to {finish}.
+
+  Parameters:~
+    • {t}      (table)
+    • {start}  (number)   Start range of slice
+    • {finish} (number)   End range of slice (inclusive)
+
+------------------------------------------------------------------------------
+
+*arr.extend* ({dst}, {src}, {at}, {start}, {finish})
+
+  Adds the values from one array to another array.
+
+  Parameters:~
+    • {dst}    (table)       Array to be extended
+    • {src}    (table)       Array to extend with
+    • {at}     (number,nil)  Insertion point in {dst}, or at end
+    • {start}  (number,nil)  Start extending at this index of {src}
+    • {finish} (number,nil)  Stop extending at this index of {src}
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*arr.flatten* ({t})
+
+  Flattens a hierarchy of arrays into a single array containing all of the
+  values.
+
+  Parameters:~
+    • {t} (table)
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*arr.intersectarr* ({a}, {b})
+
+  Set containing those elements that are in both arrays {a} and {b}.
+
+  Parameters:~
+    • {a} (table)
+    • {b} (table)
+
+  Return:~
+    (table)
+
+  See also:~
+    https://github.com/premake/premake-core/blob/master/src/base/table.lua
+
+------------------------------------------------------------------------------
+
+*arr.subtractarr* ({a}, {b})
+
+  Set containing those elements that are in array {a} but not in table {b}.
+
+  Parameters:~
+    • {a} (table)
+    • {b} (table)
+
+  Return:~
+    (boolean)
+
+
+==============================================================================
+vim:tw=78:ts=2:sw=2:ft=help:norl:et:fen:fdl=0:

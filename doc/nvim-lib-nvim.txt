@@ -6,7 +6,7 @@
 MODULE FUNCTIONS
 ==============================================================================
 
-nvim.put({lines}, {options})
+*nvim.put* ({lines}, {options})
 
   Similar to the `:put` ex command, accepts a table of lines and the same
   options as for |nvim_put()|, plus a `reindent` option.
@@ -24,7 +24,7 @@ nvim.put({lines}, {options})
 
 ------------------------------------------------------------------------------
 
-nvim.setlines({buf}, {lines}, {start}, {finish})
+*nvim.setlines* ({buf}, {lines}, {start}, {finish})
 
   Set lines for given buffer. Lines are 1-indexed. Default is:
 
@@ -45,7 +45,7 @@ nvim.setlines({buf}, {lines}, {start}, {finish})
 
 ------------------------------------------------------------------------------
 
-nvim.scratchbuf({lines}, {opts})
+*nvim.scratchbuf* ({lines}, {opts})
 
   Create a scratch buffer with lines, and set given buffer options.
 
@@ -61,7 +61,7 @@ nvim.scratchbuf({lines}, {opts})
 
 ------------------------------------------------------------------------------
 
-nvim.commands({cmds})
+*nvim.commands* ({cmds})
 
   Create any number of user commands from a table, where the keys are the
   commands names, `value.cmd` is the callback (function) or command (string),
@@ -92,7 +92,7 @@ nvim.commands({cmds})
 
 ------------------------------------------------------------------------------
 
-nvim.augroup({name})
+*nvim.augroup* ({name})
 
   Create an |augroup|, to be filled with autocommands to be declared in the
   returning function. The autocommands belong to the defined augroup. The id
@@ -123,7 +123,7 @@ nvim.augroup({name})
 
 ------------------------------------------------------------------------------
 
-nvim.try({options})
+*nvim.try* ({options})
 
   Emulate a try/catch/finally block. Example:
 >lua
@@ -190,7 +190,7 @@ nvim.try({options})
 
 ------------------------------------------------------------------------------
 
-nvim.echo({o}, {o2})
+*nvim.echo* ({o}, {o2})
 
   Print some text in the command line. Accepts one or two arguments.
 
@@ -244,7 +244,7 @@ nvim.echo({o}, {o2})
 
 ------------------------------------------------------------------------------
 
-nvim.echoerr({text})
+*nvim.echoerr* ({text})
 
   What it does is just:
 >lua
@@ -256,7 +256,7 @@ nvim.echoerr({text})
 
 ------------------------------------------------------------------------------
 
-nvim.yesno({question})
+*nvim.yesno* ({question})
 
   Ask a question, return affermative answer.
 
@@ -268,7 +268,7 @@ nvim.yesno({question})
 
 ------------------------------------------------------------------------------
 
-nvim.popup({opts})
+*nvim.popup* ({opts})
 
   Relatively minimal popup displayer, what could be done in <50 LOC.
   The buffer is created as scratch if not given, and wiped afterwards.
@@ -292,7 +292,7 @@ nvim.popup({opts})
 
 ------------------------------------------------------------------------------
 
-nvim.bufsize({buf})
+*nvim.bufsize* ({buf})
 
   Return size in bytes of buffer. In vimscript (for current buffer only) it
   would be: >
@@ -303,7 +303,7 @@ nvim.bufsize({buf})
 
 ------------------------------------------------------------------------------
 
-nvim.eval({expr}, {throw})
+*nvim.eval* ({expr}, {throw})
 
   |pcall|-ed version of |vim.fn.eval()|. Doesn't throw the error, unless second
   argument is `true`.
@@ -314,7 +314,7 @@ nvim.eval({expr}, {throw})
 
 ------------------------------------------------------------------------------
 
-nvim.search({pattern}, {flags}, {stopline}, {timeout}, {skip})
+*nvim.search* ({pattern}, {flags}, {stopline}, {timeout}, {skip})
 
   Alternative to vim.fn.search that uses `very-magic` by default, calls
   vim.fn.searchpos, and supports some additional flags:
@@ -336,7 +336,7 @@ nvim.search({pattern}, {flags}, {stopline}, {timeout}, {skip})
 
 ------------------------------------------------------------------------------
 
-nvim.testspeed({cmd}, {cnt}, {title})
+*nvim.testspeed* ({cmd}, {cnt}, {title})
 
   Test the speed of a command (or function), run for {cnt} iterations.
 
