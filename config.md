@@ -70,11 +70,15 @@ function:
 
 Full example:
 ```lua
+    -- user does this
     config = require'nvim-lib.config'
     config.plugin_name {
       option1 = 1,
       option2 = 2,
     }
+
+    -- plugin author does this
+    local cfg = config().get("plugin_name") -- then sets options
 
     local function plugin_setup(opts)
       print("You have successfully updated the plugin_name configuration.")
@@ -83,6 +87,7 @@ Full example:
 
     config().set("plugin_name", plugin_setup)
 
+    -- user updates config again, and plugin_setup is called too
     config.plugin_name {
       option1 = 3,
       option2 = 4,

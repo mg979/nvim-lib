@@ -24,6 +24,7 @@ local function print_setups()
 end
 
 return setmetatable({}, {
+  __metatable = false,
   __index = set_options,
   __newindex = function()
     error("Access to this table is protected.")
