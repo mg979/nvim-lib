@@ -13,12 +13,34 @@ local insert = table.insert
 --- (because it stops at the first nil value).
 ---@param t table
 ---@return function
-function arr.npairs(t)
-  local i = 0
-  local n = #t
-  return function()
-    i = i + 1
-    if i <= n then return i, t[i] end
+if jit then
+  function arr.npairs(t)
+    local i, n = 0, 0
+    local indices = {}
+    for k in pairs(t) do
+      if type(k) == "number" and k > n then
+        n = k
+      end
+    end
+    return function()
+      -- while i < n do
+      --   i = i + 1
+      --   if t[i] ~= nil then
+      --     return i, t[i]
+      --   end
+      -- end
+      i = i + 1
+      if i <= n then return i, t[i] end
+    end
+  end
+else
+  function arr.npairs(t)
+    local i = 0
+    local n = #t
+    return function()
+      i = i + 1
+      if i <= n then return i, t[i] end
+    end
   end
 end
 
