@@ -56,10 +56,20 @@ end
 ---@param iter function|nil
 ---@return table
 function tbl.filter(t, fn, new, iter)
-  local dst = new and {} or t
-  for k, v in (iter or pairs)(t) do
-    if not fn(k, v) then
-      dst[k] = nil
+  local dst
+  if new then
+    dst = {}
+    for k, v in (iter or pairs)(t) do
+      if fn(k, v) then
+        dst[k] = v
+      end
+    end
+  else
+    dst = t
+    for k, v in (iter or pairs)(t) do
+      if not fn(k, v) then
+        dst[k] = nil
+      end
     end
   end
   return dst

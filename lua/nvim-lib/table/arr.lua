@@ -70,10 +70,20 @@ end
 ---@param new bool
 ---@return table
 function arr.filterarr(t, fn, new)
-  local dst = new and {} or t
-  for k, v in npairs(t) do
-    if v ~= nil and not fn(k, v) then
-      dst[k] = nil
+  local dst
+  if new then
+    dst = {}
+    for k, v in npairs(t) do
+      if v and fn(k, v) then
+        dst[k] = v
+      end
+    end
+  else
+    dst = t
+    for k, v in npairs(t) do
+      if v ~= nil and not fn(k, v) then
+        dst[k] = nil
+      end
     end
   end
   return dst
