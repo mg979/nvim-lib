@@ -10,6 +10,7 @@
 -- correspondence in the api, or that are quite different.
 
 local fn = vim.fn
+local getreg, setreg = fn.getreg, fn.setreg
 local api = require("nvim-lib").api
 local tbl = require("nvim-lib").tbl
 local nvim = {}
@@ -220,7 +221,7 @@ function nvim.popup(o)
   end
   local lines = o.lines or o[1] or {}
   lines = type(lines) == "string" and vim.split(lines, "\n", { trimempty = true }) or lines
-  local buf = o.buf or nvim.scratch_buffer(lines, o.bufopts)
+  local buf = o.buf or nvim.scratchbuf(lines, o.bufopts)
   local win = api.open_win(buf, o.enter, {
     relative = o.relative or "cursor",
     win = o.relative == "win" and (o.win or api.get_current_win()) or nil,
@@ -243,9 +244,10 @@ function nvim.popup(o)
     api.win_set_option(win, k, v)
   end
   if o.on_show then
-    o.on_show()
+    o.on_show(buf, win, api.win_get_config(win))
   end
-  local close_on = o.enter and { "WinLeave" }
+  local close_on = o.close_on
+                or o.enter and { "WinLeave" }
                 or o.focusable and { "TabLeave" }
                 or { "BufLeave", "CursorMoved", "CursorMovedI" }
   api.create_autocmd(close_on, {
@@ -429,36 +431,38 @@ end
 ---   1. to "c" if the value is a string, and has no terminating "\n"
 ---   2. to table.regtype, if value is a table and .regtype exists
 ---   3. to "l" in other cases
-nvim.reg = setmetatable({
-  _unnamed = function() return fn.getreg('"') end,
-  _delete = function() return fn.getreg('-') end,
-  _colon =  function() return fn.getreg(':') end,
-  _dot =  function() return fn.getreg('.') end,
-  _star =  function() return fn.getreg('*') end,
-  _plus =  function() return fn.getreg('+') end,
-  _file =  function() return fn.getreg('%') end,
-  _alt =  function() return fn.getreg('#') end,
-  _eval =  function() return fn.getreg('=') end,
-  _expr =  function() return fn.getreg('=', 1) end,
-}, {
-  __index = function(t, k)
-    return t['_' .. k] and t['_' .. k]() or fn.getreg(k, 1)
+local _regs = {
+  unnamed = function() return getreg('"') end,
+  delete = function() return getreg('-') end,
+  colon =  function() return getreg(':') end,
+  dot =  function() return getreg('.') end,
+  star =  function() return getreg('*') end,
+  plus =  function() return getreg('+') end,
+  file =  function() return getreg('%') end,
+  alt =  function() return getreg('#') end,
+  eval =  function() return getreg('=') end,
+  expr =  function() return getreg('=', 1) end,
+}
+
+nvim.reg = setmetatable({}, {
+  __index = function(_, k)
+    return _regs[k] and _regs[k]() or getreg(k, 1)
   end,
   __newindex = function(_, k, v)
     if type(v) == "table" or v:find("\n$") then
-      fn.setreg(k, v, "l")
+      setreg(k, v, "l")
     else
-      fn.setreg(k, v, "c")
+      setreg(k, v, "c")
     end
   end,
   __call = function(_, k, content, t)
     if content then
       -- set register with content and type
-      fn.setreg(k, content, t)
+      setreg(k, content, t)
     else
       -- return contents, type, width (if of block type)
       t = fn.getregtype(k)
-      return fn.getreg(k, 1), t:sub(1, 1), t:sub(2)
+      return getreg(k, 1), t:sub(1, 1), t:sub(2)
     end
   end,
 })

@@ -274,16 +274,20 @@ MODULE FUNCTIONS
   The buffer is created as scratch if not given, and wiped afterwards.
 
   Default position is `at cursor`, width is `80`, height is `#lines`.
+  Options are optional for the most part, but either {buf} or [1] should be
+  given.
 
   Parameters: ~
     • {opts} (table)
-        • {1}       (table,string)  text
-        • {enter}   (boolean)       enter buffer or not
-        • {buf}     (number)        buffer number
-        • {bufopts} (table)         additional buffer options
-        • {winopts} (table)         additional window options
-        • {...}     (...)           options for |nvim_open_win()| are given in
-                                    the same table.
+        • [1]        (table,string)  text (buffer will be scratch)
+        • {enter}    (boolean)       enter buffer or not
+        • {buf}      (number)        buffer number (won't be scratch)
+        • {bufopts}  (table)         additional buffer options (scratch only)
+        • {winopts}  (table)         additional window options
+        • {close_on} (table)         events that close the popup (optional)
+        • {on_show}  (function)      callback with args (bufnr, winid, wincfg)
+        • {...}      (...)           options for |nvim_open_win()| are given in
+                                     the same table.
 
   Example: ~
 >lua
