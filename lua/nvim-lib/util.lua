@@ -3,20 +3,6 @@ local M = {}
 local function locals(fn)
   local variables = {}
   local idx = 1
-  -- print(debug.traceback())
-  -- for i = 1, 5 do
-  --   print('---- ' .. i .. ' ----')
-  --   local ix = 1
-  --   while true do
-  --     local ln, lv = debug.getlocal(i, ix)
-  --     if ln ~= nil then
-  --       print(ln, lv)
-  --     else
-  --       break
-  --     end
-  --     ix = 1 + ix
-  --   end
-  -- end
   while true do
     local ln, lv = debug.getlocal(5, idx)
     if ln ~= nil then
@@ -32,11 +18,9 @@ end
 local function upvalues(fn)
   local variables = {}
   local idx = 1
-  -- print("---- upvalues ----")
   while true do
     local ln, lv = debug.getupvalue(fn, idx)
     if ln ~= nil then
-      -- print(ln, lv)
       variables[ln] = lv
     else
       break
