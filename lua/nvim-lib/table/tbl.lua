@@ -78,7 +78,6 @@ end
 -------------------------------------------------------------------------------
 --- Create a new array-like table from the values of t.
 ---@param t table
----@param fn function
 ---@return table
 function tbl.toarray(t)
   local dst = {}

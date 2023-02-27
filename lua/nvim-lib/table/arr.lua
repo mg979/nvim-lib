@@ -7,40 +7,18 @@
 --------------------------------------------------------------------------------
 local arr = {}
 local insert = table.insert
+local util = require("nvim-lib.util")
 
 -------------------------------------------------------------------------------
 --- Iterator for all elements of an array, not only those returned by ipairs
 --- (because it stops at the first nil value).
 ---@param t table
 ---@return function
-if jit then
-  function arr.npairs(t)
-    local i, n = 0, 0
-    local indices = {}
-    for k in pairs(t) do
-      if type(k) == "number" and k > n then
-        n = k
-      end
-    end
-    return function()
-      -- while i < n do
-      --   i = i + 1
-      --   if t[i] ~= nil then
-      --     return i, t[i]
-      --   end
-      -- end
-      i = i + 1
-      if i <= n then return i, t[i] end
-    end
-  end
-else
-  function arr.npairs(t)
-    local i = 0
-    local n = #t
-    return function()
-      i = i + 1
-      if i <= n then return i, t[i] end
-    end
+function arr.npairs(t)
+  local i, n = 0, util.length(t)
+  return function()
+    i = i + 1
+    if i <= n then return i, t[i] end
   end
 end
 
@@ -74,9 +52,9 @@ end
 ---@return table
 function arr.maparr(t, fn, new)
   local dst = new and {} or t
-  for i = 1, #t do
-    if t[i] ~= nil then
-      dst[i] = fn(i, t[i])
+  for k, v in npairs(t) do
+    if v ~= nil then
+      dst[k] = fn(k, v)
     end
   end
   return dst
@@ -151,9 +129,9 @@ end
 ---@return table
 function arr.seq(t)
   local dst = {}
-  for i = 1, #t do
-    if t[i] then
-      insert(dst, t[i])
+  for _, v in npairs(t) do
+    if v ~= nil then
+      insert(dst, v)
     end
   end
   return dst
@@ -225,7 +203,7 @@ end
 ---@return table: Copy of table sliced from start to finish
 function arr.slice(t, start, finish)
   local dst, n = {}, 1
-  for i = start or 1, finish or #t do
+  for i = start or 1, finish or util.length(t) do
     dst[n] = t[i]
     n = n + 1
   end
@@ -242,12 +220,12 @@ end
 ---@return table
 function arr.extend(dst, src, at, start, finish)
   if at then
-    for i = start or 1, finish or #src do
+    for i = start or 1, finish or util.length(src) do
       table.insert(dst, at, src[i])
       at = at + 1
     end
   else
-    for i = start or 1, finish or #src do
+    for i = start or 1, finish or util.length(src) do
       table.insert(dst, src[i])
     end
   end
