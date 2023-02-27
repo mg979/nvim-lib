@@ -62,7 +62,7 @@ end
 function tbl.filter(t, fn, new, iter)
   local dst
   if type(fn) == "string" then
-    fn = util.kvfunc(fn)
+    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
   end
   if new then
     dst = {}
