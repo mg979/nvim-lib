@@ -30,8 +30,6 @@ local nvim = setmetatable({}, {
     }
     if sub[k] then
       v = require("nvim-lib.nvim." .. k)
-    elseif #k < 3 then
-      v = require("nvim-lib.nvim.variables")[k]
     else
       v = require("nvim-lib.nvim.fast")[k]
       if not v then
