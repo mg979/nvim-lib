@@ -464,6 +464,7 @@ local _regs = {
 }
 
 nvim.reg = setmetatable({}, {
+  __metatable = false,
   __index = function(_, k)
     return _regs[k] and _regs[k]() or getreg(k, 1)
   end,
@@ -490,6 +491,7 @@ nvim.reg = setmetatable({}, {
 -- Keycodes as they can be used in lua scripts.
 -- Keys like Esc (instead of <Esc>), CtrlO (instead of <C-o>) are also valid.
 nvim.keycodes = setmetatable({}, {
+  __metatable = false,
   __index = function(t,k)
     local K = k
     if k:find("^<%w+>$") then
@@ -516,6 +518,116 @@ nvim.keycodes = setmetatable({}, {
   end,
 })
 
+--------------------------------------------------------------------------------
+-- Special tables that link to vim namespaces
+--------------------------------------------------------------------------------
+
+nvim.w = setmetatable({}, {
+  __metatable = false,
+  __index = function(_,k) return vim.w[k] end,
+  __newindex = function(_,k,v) vim.w[k] = v end,
+})
+
+nvim.b = setmetatable({}, {
+  __metatable = false,
+  __index = function(_,k) return vim.b[k] end,
+  __newindex = function(_,k,v) vim.b[k] = v end,
+})
+
+nvim.o = setmetatable({}, {
+  __metatable = false,
+  __index = function(_,k) return vim.o[k] end,
+  __newindex = function(_,k,v) vim.o[k] = v end,
+})
+
+nvim.bo = setmetatable({}, {
+  __metatable = false,
+  __index = function(_,k) return vim.bo[k] end,
+  __newindex = function(_,k,v) vim.bo[k] = v end,
+})
+
+nvim.wo = setmetatable({}, {
+  __metatable = false,
+  __index = function(_,k) return vim.wo[k] end,
+  __newindex = function(_,k,v) vim.wo[k] = v end,
+})
+
+nvim.v = setmetatable({}, {
+  __metatable = false,
+  __index = function(_,k) return vim.v[k] end,
+  __newindex = function(_,k,v) vim.v[k] = v end,
+})
+
+
+--------------------------------------------------------------------------------
+-- Table to set cursor position/marks
+--------------------------------------------------------------------------------
+
+local _marks = {
+  cursor = ".",
+  eol = "$",
+  winTop = "w0",
+  winBottom = "w$",
+  visualMode = "v",
+  visualBegin = "`<",
+  visualEnd = "`>",
+  yankBegin = "`[",
+  yankEnd = "`]",
+  lastJump = "``",
+  lastPos = "`\"",
+  lastInsert = "`^",
+  lastChange = "`.",
+  sentenceBegin = "`(",
+  sentenceEnd = "`)",
+  paragraphBegin = "`{",
+  paragraphEnd = "`}",
+  visualBeginLine = "'<",
+  visualEndLine = "'>",
+  yankBeginLine = "'[",
+  yankEndLine = "']",
+  lastJumpLine = "'`",
+  lastPosLine = "'\"",
+  lastInsertLine = "'^",
+  lastChangeLine = "'.",
+  sentenceBeginLine = "'(",
+  sentenceEndLine = "')",
+  paragraphBeginLine = "'{",
+  paragraphEndLine = "'}",
+}
+
+--- Position are translated to tables with named keys (buf, line, col, offset).
+--- The table can be called with one or two arguments:
+---   Pos(position)       sets the cursor position
+---   Pos(mark, position) sets the mark position
+nvim.pos = setmetatable({}, {
+  __metatable = false,
+  __index = function(_, mark)
+    mark = _marks[mark] or mark
+    local pos = fn.getpos(mark)
+    return {
+      buf = pos[1],
+      line = pos[2],
+      col = pos[3],
+      offset = pos[4],
+    }
+  end,
+  __newindex = function(_, mark, pos)
+    mark = _marks[mark] or mark
+    if pos[1] then
+      fn.setpos(mark, pos)
+    else
+      fn.setpos(mark, { pos.buf, pos.line, pos.col, pos.offset })
+    end
+  end,
+  __call = function(_, mark, pos)
+    mark = _marks[mark] or mark
+    if not pos then mark, pos = ".", mark end
+    if not pos[1] then
+      pos = { pos.buf, pos.line, pos.col, pos.offset }
+    end
+    fn.setpos(mark, pos)
+  end
+})
 
 -------------------------------------------------------------------------------
 -- End of module
