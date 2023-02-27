@@ -17,12 +17,27 @@ local api = setmetatable({}, {
   end,
 })
 
---  ╭───────────────╮
---  │ New functions │
---  ╰───────────────╯
+--  ╭───────────────────────╮
+--  │ New functions, tables │
+--  ╰───────────────────────╯
 local nvim = setmetatable({}, {
   __index = function(t, k)
-    local v = require("nvim-lib.nvim")[k]
+    local v
+    local sub = {
+      reg = true,
+      keycodes = true,
+      pos = true,
+    }
+    if sub[k] then
+      v = require("nvim-lib.nvim." .. k)
+    elseif #k < 3 then
+      v = require("nvim-lib.nvim.variables")[k]
+    else
+      v = require("nvim-lib.nvim.fast")[k]
+      if not v then
+        v = require("nvim-lib.nvim")[k]
+      end
+    end
     t[k] = v
     return v
   end
