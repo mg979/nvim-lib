@@ -46,12 +46,15 @@ end
 --- Map an array in place (or to new table) with `fn`.
 --- `fn` is called with (key, value) as arguments.
 --- Note: this function can create holes in an array.
----@param fn function
+---@param fn function|string
 ---@param t table
 ---@param new bool
 ---@return table
 function arr.maparr(t, fn, new)
   local dst = new and {} or t
+  if type(fn) == "string" then
+    fn = util.kvfunc(fn)
+  end
   for k, v in npairs(t) do
     if v ~= nil then
       dst[k] = fn(k, v)
@@ -63,11 +66,14 @@ end
 -------------------------------------------------------------------------------
 --- Map an array with `fn`. Produce a new sequence.
 --- `fn` is called with (key, value) as arguments.
----@param fn function
+---@param fn function|string
 ---@param t table
 ---@return table
 function arr.mapseq(t, fn)
   local dst = {}
+  if type(fn) == "string" then
+    fn = util.kvfunc(fn)
+  end
   for k, v in npairs(t) do
     if v then
       v = fn(k, v)
@@ -83,12 +89,15 @@ end
 --- Filter an array in place (or to new table) with `fn`.
 --- `fn` is called with (key, value) as arguments.
 --- Note: this function can create holes in an array.
----@param fn function
+---@param fn function|string
 ---@param t table
 ---@param new bool
 ---@return table
 function arr.filterarr(t, fn, new)
   local dst
+  if type(fn) == "string" then
+    fn = util.kvfunc(fn)
+  end
   if new then
     dst = {}
     for k, v in npairs(t) do
@@ -110,11 +119,14 @@ end
 -------------------------------------------------------------------------------
 --- Filter an array with `fn`. Produce a new sequence.
 --- `fn` is called with (key, value) as arguments.
----@param fn function
+---@param fn function|string
 ---@param t table
 ---@return table
 function arr.filterseq(t, fn)
   local dst = {}
+  if type(fn) == "string" then
+    fn = util.kvfunc(fn)
+  end
   for k, v in npairs(t) do
     if v ~= nil and fn(k, v) then
       insert(dst, v)

@@ -24,7 +24,7 @@ MODULE FUNCTIONS
 ------------------------------------------------------------------------------
 
 *tbl.map* ({t}, {fn}, {new}, {iter})
-
+                                                       |nvim-lib-fn-as-string|
   Map a table in place (or to new table) with {fn}.
   The function is called with (key, value) as arguments.
   The default iterator is |pairs|, but it can be overridden with the `iter`
@@ -33,7 +33,7 @@ MODULE FUNCTIONS
 
   Parameters:~
     • {t} table
-    • {fn} function
+    • {fn} function,string
     • {new} boolean,nil
     • {iter} function,nil
 
@@ -43,7 +43,7 @@ MODULE FUNCTIONS
 ------------------------------------------------------------------------------
 
 *tbl.filter* ({t}, {fn}, {new}, {iter})
-
+                                                       |nvim-lib-fn-as-string|
   Filter a table in place (or to new table) with {fn}.
   The function is called with (key, value) as arguments.
   The default iterator is |pairs|, but it can be overridden with the `iter`
@@ -52,7 +52,7 @@ MODULE FUNCTIONS
 
   Parameters:~
     • {t} table
-    • {fn} function
+    • {fn} function,string
     • {new} boolean,nil
     • {iter} function,nil
 
@@ -67,7 +67,6 @@ MODULE FUNCTIONS
 
   Parameters:~
     • {t} table
-    • {fn} function
 
   Return:~
     (table)

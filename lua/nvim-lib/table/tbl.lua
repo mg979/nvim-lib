@@ -1,5 +1,6 @@
 local tbl = {}
 local insert = table.insert
+local util = require("nvim-lib.util")
 
 -------------------------------------------------------------------------------
 --- Enumerate a table sorted by its keys.
@@ -32,12 +33,15 @@ end
 --- argument. Other useful iterators: `ipairs`, `arr.npairs`.
 --- Note: this function can create holes in an array.
 ---@param t table
----@param fn function
+---@param fn function|string
 ---@param new bool|nil
 ---@param iter function|nil
 ---@return table
 function tbl.map(t, fn, new, iter)
   local dst = new and {} or t
+  if type(fn) == "string" then
+    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
+  end
   for k, v in (iter or pairs)(t) do
     dst[k] = fn(k, v)
   end
@@ -51,12 +55,15 @@ end
 --- The function is called with (key, value) as arguments.
 --- Note: this function can create holes in an array.
 ---@param t table
----@param fn function
+---@param fn function|string
 ---@param new bool|nil
 ---@param iter function|nil
 ---@return table
 function tbl.filter(t, fn, new, iter)
   local dst
+  if type(fn) == "string" then
+    fn = util.kvfunc(fn)
+  end
   if new then
     dst = {}
     for k, v in (iter or pairs)(t) do

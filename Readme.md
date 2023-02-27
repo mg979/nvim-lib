@@ -78,6 +78,8 @@ a `comp` function for the sorting operation.
 
 Functions with argument `iter` accept a custom iterator (default is `pairs`).
 
+Map/filter functions can also be a string (similar to vimscript `map()`).
+
     function        arguments
     ------------------------------------
     spairs          t, comp
@@ -115,6 +117,8 @@ Functions that are more specialized in handling arrays and sequences.
 There is a new iterator (`arr.npairs`) that can iterate arrays without skipping
 nil values (as `ipairs` does instead), so it can be used to iterate arrays, and
 not only sequences.
+
+Map/filter functions can also be a string (similar to vimscript `map()`).
 
     function        arguments
     ------------------------------------

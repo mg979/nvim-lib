@@ -31,13 +31,13 @@ MODULE FUNCTIONS
 ------------------------------------------------------------------------------
 
 *arr.maparr* ({t}, {fn}, {new})
-
+                                                       |nvim-lib-fn-as-string|
   Map an array in place (or to new table) with {fn}.
   {fn} is called with (key, value) as arguments.
   Note: this function can create holes in an array.
 
   Parameters:~
-    • {fn}  (function)
+    • {fn}  (function,string)
     • {t}   (table)
     • {new} (bool)
   Return:~
@@ -46,12 +46,12 @@ MODULE FUNCTIONS
 ------------------------------------------------------------------------------
 
 *arr.mapseq* ({t}, {fn})
-
+                                                       |nvim-lib-fn-as-string|
   Map an array with {fn}. Produce a new sequence.
   {fn} is called with (key, value) as arguments.
 
   Parameters:~
-    • {fn} (function)
+    • {fn} (function,string)
     • {t}  (table)
 
   Return:~
@@ -60,13 +60,13 @@ MODULE FUNCTIONS
 ------------------------------------------------------------------------------
 
 *arr.filterarr* ({t}, {fn}, {new})
-
+                                                       |nvim-lib-fn-as-string|
   Filter an array in place (or to new table) with {fn}.
   {fn} is called with (key, value) as arguments.
   Note: this function can create holes in an array.
 
   Parameters:~
-    • {fn}  (function)
+    • {fn}  (function,string)
     • {t}   (table)
     • {new} (bool)
 
@@ -76,12 +76,12 @@ MODULE FUNCTIONS
 ------------------------------------------------------------------------------
 
 *arr.filterseq* ({t}, {fn})
-
+                                                       |nvim-lib-fn-as-string|
   Filter an array with {fn}. Produce a new sequence.
   {fn} is called with (key, value) as arguments.
 
   Parameters: ~
-    • {fn} (function)
+    • {fn} (function,string)
     • {t}  (table)
 
   Return: ~
