@@ -94,6 +94,24 @@ function nvim.commands(cmds)
 end
 
 -------------------------------------------------------------------------------
+--- Set any number of mappings with vim.keymap.set.
+--- Each key of the table is a `lhs` for a mapping. Its value can be:
+--- 1. a string: a vim command for the `rhs`, with default options
+--- 2. a function: the `rhs`, with default options
+--- 3. a table with keys: rhs, mode, {opts} or any option for vim.keymap.set
+---@param maps table
+function nvim.mappings(maps)
+  for lhs, map in pairs(maps) do
+    if type(map) ~= "table" then
+      map = { rhs = map }
+    end
+    map.opts = map.opts or tbl.copy(map)
+    map.opts[1], map.opts.rhs, map.opts.mode = nil, nil, nil
+    vim.keymap.set(map.mode or 'n', lhs, map.rhs or map[1], map.opts)
+  end
+end
+
+-------------------------------------------------------------------------------
 --- Create an augroup, to be filled with autocommands to be declared in the
 --- returning function. The autocommands belong to the defined augroup.
 --- The id of the augroup is the return value of the returning function.
