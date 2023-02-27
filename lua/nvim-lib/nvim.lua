@@ -312,6 +312,7 @@ end
 ---   catch = {
 ---     { pat1, callback_if_pat1_matches_error -> (error) },
 ---     { pat2, callback_if_pat2_matches_error -> (error) },
+---     { pat3, true }, -- catch it silently
 ---     ...
 ---   },
 ---
@@ -336,7 +337,7 @@ function nvim.try(o)
   if not ok then
     for _, catch in ipairs(o.catch) do
       if res:find(catch[1]) then
-        caught = { catch[1], catch[2](res) }
+        caught = { catch[1], catch[2] == true and true or catch[2](res) }
         break
       end
     end

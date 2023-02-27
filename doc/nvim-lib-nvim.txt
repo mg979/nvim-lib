@@ -133,6 +133,7 @@ MODULE FUNCTIONS
       catch = {
         { pat1, callback_if_pat1_matches_error }, -- => (error)
         { pat2, callback_if_pat2_matches_error }, -- => (error)
+        { pat3, true }, -- catch it silently
         ...
       },
 
