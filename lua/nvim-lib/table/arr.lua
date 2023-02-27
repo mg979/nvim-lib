@@ -47,6 +47,24 @@ end
 local npairs = arr.npairs
 
 -------------------------------------------------------------------------------
+--- Create an array with numeric values, with a starting value, an ending value,
+--- and an increment step. If `start` > `finish`, default `step` is -1,
+--- otherwise 1.
+---@param start number
+---@param finish number
+---@param step number
+---@return table
+function arr.range(start, finish, step)
+  local rng = {}
+  start, finish = finish and start or 0, finish or start
+  step = step or (start <= finish and 1 or -1)
+  for i = start, finish, step do
+    insert(rng, i)
+  end
+  return rng
+end
+
+-------------------------------------------------------------------------------
 --- Map an array in place (or to new table) with `fn`.
 --- `fn` is called with (key, value) as arguments.
 --- Note: this function can create holes in an array.

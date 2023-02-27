@@ -119,6 +119,7 @@ not only sequences.
     function        arguments
     ------------------------------------
     npairs          t
+    range           n, m, step
     maparr          t, fn, new
     mapseq          t, fn
     filterarr       t, fn, new

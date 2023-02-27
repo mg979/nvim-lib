@@ -228,6 +228,7 @@ MODULE - ARR                                                    *nvim-lib-arr*
     function        arguments         notes~
     ---------------------------------------------------------~
     `npairs`          t                 iterator that doesn't skip nil values
+    `range`           n, m, step        cf. |range()|
     `maparr`          t, fn, new        map an array with {fn}
     `mapseq`          t, fn             map an array to a new sequence
     `filterarr`       t, fn, new        filter an array with {fn}
