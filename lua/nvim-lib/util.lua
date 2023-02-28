@@ -1,6 +1,7 @@
+local fn = vim.fn
 local M = {}
 
-local function locals(fn)
+local function locals()
   local variables = {}
   local idx = 1
   while true do
@@ -15,11 +16,11 @@ local function locals(fn)
   return variables
 end
 
-local function upvalues(fn)
+local function upvalues(f)
   local variables = {}
   local idx = 1
   while true do
-    local ln, lv = debug.getupvalue(fn, idx)
+    local ln, lv = debug.getupvalue(f, idx)
     if ln ~= nil then
       variables[ln] = lv
     else
@@ -30,9 +31,9 @@ local function upvalues(fn)
   return variables
 end
 
-local function get_local_env(fn)
-  local variables = locals(fn)
-  for k, v in pairs(upvalues(fn)) do
+local function get_local_env(f)
+  local variables = upvalues(f)
+  for k, v in pairs(locals()) do
     variables[k] = v
   end
   return variables
@@ -63,6 +64,21 @@ function M.length(t)
     end
   end
   return n
+end
+
+--------------------------------------------------------------------------------
+-- Error log
+--------------------------------------------------------------------------------
+local logs = {}
+
+function M.log(err)
+  if not err then
+    for _, e in ipairs(logs) do
+      print(string.format("%s: %s", e[1], e[2]))
+    end
+    return
+  end
+  table.insert(logs, { fn.strftime("%y/%m/%d %H:%M"), err })
 end
 
 return M
