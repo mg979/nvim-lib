@@ -73,8 +73,12 @@ local logs = {}
 
 function M.log(err)
   if not err then
-    for _, e in ipairs(logs) do
-      print(string.format("%s: %s", e[1], e[2]))
+    if #logs > 0 then
+      for _, e in ipairs(logs) do
+        print(string.format("%s: %s", e[1], e[2]))
+      end
+    else
+      print("No errors")
     end
     return
   end
