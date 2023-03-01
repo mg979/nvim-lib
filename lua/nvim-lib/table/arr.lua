@@ -34,7 +34,7 @@ local npairs = arr.npairs
 ---@return table
 function arr.range(start, finish, step)
   local rng = {}
-  start, finish = finish and start or 0, finish or start
+  start, finish = finish and start or 1, finish or start or 1
   step = step or (start <= finish and 1 or -1)
   for i = start, finish, step do
     insert(rng, i)
