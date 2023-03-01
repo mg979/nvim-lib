@@ -1,0 +1,149 @@
+*nvim-lib-tables* Convenient tables for nvim.
+
+
+REGISTERS TABLE                                           *nvim-lib-registers*
+------------------------------------------------------------------------------
+
+nvim.reg[{register}]
+
+  Table that can be accessed by register:
+>lua
+    R = nvim.reg['"']           -- read register
+    r, t, w = nvim.reg('"')     -- read register, type, width if block type
+    nvim.reg['"'] = text        -- set register to some text
+    nvim.reg('"', text, "b")    -- set register to text, and set register type
+<
+  `nvim.reg` also understands the following expressions:
+        key                same as~
+      nvim.reg.unnamed   |getreg|('"')
+      nvim.reg.delete    |getreg|('-')
+      nvim.reg.colon     |getreg|(':')
+      nvim.reg.dot       |getreg|('.')
+      nvim.reg.star      |getreg|('*')
+      nvim.reg.plus      |getreg|('+')
+      nvim.reg.file      |getreg|('%')
+      nvim.reg.alt       |getreg|('#')
+      nvim.reg.eval      |getreg|('=')
+      nvim.reg.expr      |getreg|('=', 1)
+
+  When setting a register, the following rules are applied:
+
+     • {string}   type is "c", or "l" if it terminates with "\n"
+     • {table}    type is "l"
+
+  You must use the function form to set the type as block. Also remember that
+  some registers are read-only. There is no error checking.
+
+  See also: ~
+    |getreg()|, |getregtype()|, |setreg()|, |getreginfo()|
+
+
+
+KEYCODES TABLE                                             *nvim-lib-keycodes*
+------------------------------------------------------------------------------
+
+nvim.keycodes[{keycode}]
+
+  Lua doesn't handle naturally keycodes like <CR>, <BS> in the same way that
+  vimscript does. To make them work in Lua, they must be translated in
+  terminal codes first with |nvim_replace_termcodes()|.
+
+  With this table you get the translated keycodes, you can use either the
+  keycode notation (<key>) or a "stringified" notation:
+>lua
+    local k = nvim.keycodes
+    local CR, Tab = k.CR, k.Tab -- also: k['<CR>'], k['<Tab>']
+    local co, mj = k.CtrlO, k.Metaj -- MetaJ and Metaj are different!
+    local cp, mK = k['<C-p>'], k['<M-K>'] -- case can matter
+<
+  Note: case doesn't matter for keycodes like <CR> or <C-O>, but it matters
+  for the <M-?> keycodes, since <M-a> and <M-A> are different keys.
+
+
+
+MARKS TABLE                                                   *nvim-lib-marks*
+------------------------------------------------------------------------------
+
+nvim.pos[{mark}]
+
+  Example:~
+>lua
+    local Pos = nvim.pos
+
+    start, finish = Pos["'<"], Pos["'>"] -- or
+    start, finish = Pos.visualBeginLine, Pos.visualEndLine
+
+    Pos.yankBeginLine = start
+    Pos.yankEndLine = finish
+    -- or
+    Pos["'["] = start
+    Pos["']"] = finish
+
+    curspos = Pos()                     -- get cursor position
+    winpos  = Pos(win)                  -- get cursor position in win
+    upper   = Pos.upper(mark)           -- get uppercase mark
+    markpos = Pos.bufmark(mark, bufnr)  -- get mark in buffer `bufnr`
+<
+
+  Positions are translated to tables with named keys:
+    • `buf`     -> getpos({mark})[0]
+    • `line`    -> getpos({mark})[1]
+    • `col`     -> getpos({mark})[2]
+    • `offset`  -> getpos({mark})[3]
+
+  Positions as returned by |getpos()| are also supported (when setting marks).
+
+  The table can also be called, with zero, one or two arguments. They return
+  a table like shown above, so that the same table can be reused with
+  `nvim.pos` keys.
+
+  • Pos({win})                        like |nvim_win_get_cursor()|
+  • Pos.upper({mark})                 like |nvim_get_mark()|
+  • Pos.bufmark({mark}, {bufnr})      like |nvim_buf_get_mark()|
+
+  `nil` is returned when the mark is invalid:
+
+    • because queried for a non existant buffer or window
+    • because Pos({mark}) was called with a non-uppercase mark
+    • because the return value denotes an invalid mark
+
+  No errors are raised in the cases where nvim_* functions would, but the
+  error message is added to the error log. |nvim-lib-log|
+
+  An `error` is only raised if you try to set a position with a table that
+  doesn't conform to either |getpos()| or the format shown above.
+
+  Some marks can also be referred by name (camelCase):
+
+    `nvim.pos`.cursor                |.|      see |line()|
+    `nvim.pos`.lastLine              |$|      ,,  ,,
+    `nvim.pos`.winTopLine            |w0|     ,,  ,,
+    `nvim.pos`.winBottomLine         |w$|     ,,  ,,
+    `nvim.pos`.visualMode            |v|      ,,  ,,
+    `nvim.pos`.visualBegin           |`<|
+    `nvim.pos`.visualEnd             |`>|
+    `nvim.pos`.yankBegin             |`[|
+    `nvim.pos`.yankEnd               |`]|
+    `nvim.pos`.lastJump              |``|
+    `nvim.pos`.lastPos               |`quote|
+    `nvim.pos`.lastInsert            |`^|
+    `nvim.pos`.lastChange            |`.|
+    `nvim.pos`.sentenceBegin         |`(|
+    `nvim.pos`.sentenceEnd           |`)|
+    `nvim.pos`.paragraphBegin        |`{|
+    `nvim.pos`.paragraphEnd          |`}|
+    `nvim.pos`.visualBeginLine       |'<|
+    `nvim.pos`.visualEndLine         |'>|
+    `nvim.pos`.yankBeginLine         |'[|
+    `nvim.pos`.yankEndLine           |']|
+    `nvim.pos`.lastJumpLine          |'`|
+    `nvim.pos`.lastPosLine           |'quote|
+    `nvim.pos`.lastInsertLine        |'^|
+    `nvim.pos`.lastChangeLine        |'.|
+    `nvim.pos`.sentenceBeginLine     |'(|
+    `nvim.pos`.sentenceEndLine       |')|
+    `nvim.pos`.paragraphBeginLine    |'{|
+    `nvim.pos`.paragraphEndLine      |'}|
+
+==============================================================================
+vim:tw=78:ts=2:sw=2:ft=help:norl:et:fen:fdl=0:
