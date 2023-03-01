@@ -53,7 +53,7 @@ end
 function arr.maparr(t, fn, new)
   local dst = new and {} or t
   if type(fn) == "string" then
-    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
+    fn = util.kvfunc(fn)
   end
   for k, v in npairs(t) do
     if v ~= nil then
@@ -72,7 +72,7 @@ end
 function arr.mapseq(t, fn)
   local dst = {}
   if type(fn) == "string" then
-    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
+    fn = util.kvfunc(fn)
   end
   for k, v in npairs(t) do
     if v then
@@ -96,7 +96,7 @@ end
 function arr.filterarr(t, fn, new)
   local dst
   if type(fn) == "string" then
-    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
+    fn = util.kvfunc(fn)
   end
   if new then
     dst = {}
@@ -125,7 +125,7 @@ end
 function arr.filterseq(t, fn)
   local dst = {}
   if type(fn) == "string" then
-    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
+    fn = util.kvfunc(fn)
   end
   for k, v in npairs(t) do
     if v ~= nil and fn(k, v) then

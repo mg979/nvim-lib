@@ -44,7 +44,17 @@ end
 --- be replaced by the current key and the value of the processed table.
 ---@param string string
 ---@return function
-function M.kvfunc(string, caller)
+function M.kvfunc(string)
+  local caller
+  for i = 4, 1, -1 do
+    caller = debug.getinfo(i, "f")
+    if caller and caller.func then
+      caller = caller.func
+      break
+    elseif i == 1 then
+      error("nvim-lib: Error in resolving function environment.")
+    end
+  end
   local func = load("return function(_K, _V) return " .. string .. " end")()
   setfenv(func, get_local_env(caller))
   return func

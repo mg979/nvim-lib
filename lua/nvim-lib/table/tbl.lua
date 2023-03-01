@@ -40,7 +40,7 @@ end
 function tbl.map(t, fn, new, iter)
   local dst = new and {} or t
   if type(fn) == "string" then
-    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
+    fn = util.kvfunc(fn)
   end
   for k, v in (iter or pairs)(t) do
     dst[k] = fn(k, v)
@@ -62,7 +62,7 @@ end
 function tbl.filter(t, fn, new, iter)
   local dst
   if type(fn) == "string" then
-    fn = util.kvfunc(fn, debug.getinfo(3, "f").func)
+    fn = util.kvfunc(fn)
   end
   if new then
     dst = {}
