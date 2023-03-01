@@ -79,6 +79,9 @@ nvim.pos[{mark}]
     Pos["'["] = start
     Pos["']"] = finish
 
+    -- special case: move cursor to position
+    Pos.cursor = start
+
     curspos = Pos()                     -- get cursor position
     winpos  = Pos(win)                  -- get cursor position in win
     upper   = Pos.upper(mark)           -- get uppercase mark

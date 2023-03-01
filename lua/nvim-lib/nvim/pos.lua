@@ -88,6 +88,15 @@ return setmetatable({ upper = upper, bufmark = bufmark, }, {
   end,
   __newindex = function(_, mark, pos)
     mark = _marks[mark] or mark
+    if mark == "." then
+      if pos[1] then
+        pos = getpos(".")
+        fn.cursor(pos.line, pos.col)
+      else
+        fn.cursor(pos.line, pos.col)
+      end
+      return
+    end
     if pos[1] and #pos == 4 then -- assume vim mark position
       fn.setpos(mark, pos)
     else
