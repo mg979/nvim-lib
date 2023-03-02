@@ -100,7 +100,7 @@ Map/filter functions can also be a string (similar to vimscript `map()`).
     deepcopy        object
     equal           a, b, deep
     intersect       a, b, iter
-    difference      a, b, iter
+    subtract        a, b, iter
 
 Help files:
 
@@ -126,10 +126,8 @@ Map/filter functions can also be a string (similar to vimscript `map()`).
     ------------------------------------
     npairs          t
     range           n, m, step
-    maparr          t, fn, new, iter
-    mapseq          t, fn, iter
-    filterarr       t, fn, new, iter
-    filterseq       t, fn, iter
+    map             t, fn, new, iter
+    filter          t, fn, iter
     seq             t, iter
     isseq           t
     isarr           t
@@ -139,8 +137,8 @@ Map/filter functions can also be a string (similar to vimscript `map()`).
     reverse         t, new
     extend          dst, src, at, start, finish
     flatten         t, iter
-    intersectarr    a, b, iter
-    subtractarr     a, b, iter
+    intersect       a, b, iter
+    subtract        a, b, iter
 
 Help files:
 

@@ -167,7 +167,7 @@ MODULE - TBL                                                    *nvim-lib-tbl*
     `values`       t                    create array with table values
     `equal`        a, b, deep           check for table equality, also deep
     `intersect`    a, b, iter           common `k/v pairs` between two tables
-    `difference`   a, b, iter           only `k/v pairs` that belong to one table
+    `subtract`     a, b, iter           only `k/v pairs` that belong to one table
 
   Notes:
 
@@ -197,10 +197,8 @@ MODULE - ARR                                                    *nvim-lib-arr*
     ---------------------------------------------------------~
     `npairs`          t                 iterator that doesn't skip nil values
     `range`           n, m, step        cf. |range()|
-    `maparr`          t, fn, new, iter  map an array with {fn}
-    `mapseq`          t, f, iter        map an array to a new sequence
-    `filterarr`       t, fn, new, iter  filter an array with {fn}
-    `filterseq`       t, fn, iter       filter an array to a new sequence {1}
+    `map`             t, fn, new, iter  map an array with {fn}
+    `filter`          t, fn, iter       filter an array to a new sequence {1}
     `seq`             t, iter           new sequence from array, removing holes
     `isseq`           t                 false if there are holes in the array
     `isarr`           t                 false if there are non-numerical indices
@@ -210,8 +208,8 @@ MODULE - ARR                                                    *nvim-lib-arr*
     `reverse`         t, new            reverse array, in place or not
     `extend`          a, b, at, s, f    append/insert an array in another
     `flatten`         t, iter           nested arrays in a linear array
-    `intersectarr`    a, b, iter        common `values` between a and b
-    `subtractarr`     a, b, iter        only `values` that belong to a and not b
+    `intersect`       a, b, iter        common `values` between a and b
+    `subtract`        a, b, iter        only `values` that belong to a and not b
 
   {1} this is the closest to |vim.tbl_filter| behaviour.
 

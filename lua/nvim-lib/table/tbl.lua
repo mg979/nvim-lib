@@ -320,7 +320,7 @@ end
 ---@param b table
 ---@param iter function|nil
 ---@return table
-function tbl.difference(a, b, iter)
+function tbl.subtract(a, b, iter)
   local result = {}
   for k, v in (iter or pairs)(a) do
     if not b[k] then

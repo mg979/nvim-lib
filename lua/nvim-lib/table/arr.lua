@@ -55,7 +55,7 @@ end
 ---@param new bool|nil
 ---@param iter function|nil
 ---@return table
-function arr.maparr(t, fn, new, iter)
+function arr.map(t, fn, new, iter)
   local dst = new and {} or t
   if type(fn) == "string" then
     fn = util.kvfunc(fn)
@@ -67,66 +67,13 @@ function arr.maparr(t, fn, new, iter)
 end
 
 -------------------------------------------------------------------------------
---- Map an array with `fn`. Produce a new sequence.
---- `fn` is called with (key, value) as arguments.
----@param t table
----@param fn function|string
----@param iter function|nil
----@return table
-function arr.mapseq(t, fn, iter)
-  local dst = {}
-  if type(fn) == "string" then
-    fn = util.kvfunc(fn)
-  end
-  for k, v in (iter or ipairs)(t) do
-    v = fn(k, v)
-    if v ~= nil then
-      insert(dst, v)
-    end
-  end
-  return dst
-end
-
--------------------------------------------------------------------------------
---- Filter an array in place (or to new table) with `fn`.
---- `fn` is called with (key, value) as arguments.
---- Note: this function can create holes in an array.
----@param t table
----@param fn function|string
----@param new bool|nil
----@param iter function|nil
----@return table
-function arr.filterarr(t, fn, new, iter)
-  local dst
-  if type(fn) == "string" then
-    fn = util.kvfunc(fn)
-  end
-  if new then
-    dst = {}
-    for k, v in (iter or ipairs)(t) do
-      if fn(k, v) then
-        dst[k] = v
-      end
-    end
-  else
-    dst = t
-    for k, v in (iter or ipairs)(t) do
-      if not fn(k, v) then
-        dst[k] = nil
-      end
-    end
-  end
-  return dst
-end
-
--------------------------------------------------------------------------------
 --- Filter an array with `fn`. Produce a new sequence.
 --- `fn` is called with (key, value) as arguments.
 ---@param t table
 ---@param fn function|string
 ---@param iter function|nil
 ---@return table
-function arr.filterseq(t, fn, iter)
+function arr.filter(t, fn, iter)
   local dst = {}
   if type(fn) == "string" then
     fn = util.kvfunc(fn)
@@ -297,7 +244,7 @@ end
 ---@param b table
 ---@param iter function|nil
 ---@return table
-function arr.intersectarr(a, b, iter)
+function arr.intersect(a, b, iter)
   local result = {}
   for _, v in (iter or ipairs)(b) do
     if arr.indexof(a, v, iter) then
@@ -313,7 +260,7 @@ end
 ---@param b table
 ---@param iter function|nil
 ---@return table
-function arr.subtractarr(a, b, iter)
+function arr.subtract(a, b, iter)
   local result = {}
   for _, v in (iter or ipairs)(a) do
     if not arr.indexof(b, v, iter) then

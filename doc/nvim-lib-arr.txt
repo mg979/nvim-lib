@@ -55,13 +55,12 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.maparr* ({t}, {fn}, {new}, {iter})
+*arr.map* ({t}, {fn}, {new}, {iter})
                                                        |nvim-lib-fn-as-string|
   Map an array in place (or to new table) with {fn}.
   {fn} is called with (key, value) as arguments.
 
   Note: this function can create holes in an array.
-  Use |arr.mapseq| if you want to produce a sequence.
 
   Parameters:~
     • {fn}   (function,string)
@@ -74,43 +73,10 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.mapseq* ({t}, {fn}, {iter})
+*arr.filter* ({t}, {fn}, {iter})
                                                        |nvim-lib-fn-as-string|
-  Map an array with {fn}. Produce a new sequence.
-  {fn} is called with (key, value) as arguments.
-
-  Parameters:~
-    • {fn}   (function,string)
-    • {t}    (table)
-    • {iter} (function)
-
-  Return:~
-      (table)
-
-------------------------------------------------------------------------------
-
-*arr.filterarr* ({t}, {fn}, {new}, {iter})
-                                                       |nvim-lib-fn-as-string|
-  Filter an array in place (or to new table) with {fn}.
-  {fn} is called with (key, value) as arguments.
-
-  Note: this function is `LIKELY` to create holes in an array.
-  Use |arr.filterseq| if you want to produce a sequence.
-
-  Parameters:~
-    • {fn}   (function,string)
-    • {t}    (table)
-    • {new}  (bool)
-    • {iter} (function)
-
-  Return:~
-    (table)
-
-------------------------------------------------------------------------------
-
-*arr.filterseq* ({t}, {fn}, {iter})
-                                                       |nvim-lib-fn-as-string|
-  Filter an array with {fn}. Produce a new sequence.
+  Filter an array with {fn}.
+  Never filters in place, produces a new sequence.
   {fn} is called with (key, value) as arguments.
 
   Note: this is the closest to the |vim.tbl_filter| behaviour.
@@ -121,7 +87,7 @@ MODULE FUNCTIONS
     • {iter} (function)
 
   Return: ~
-    (table) merged table
+    (table)
 
 ------------------------------------------------------------------------------
 
@@ -261,7 +227,7 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.intersectarr* ({a}, {b}, {iter})
+*arr.intersect* ({a}, {b}, {iter})
 
   Set containing those elements that are in both arrays {a} and {b}.
 
@@ -278,7 +244,7 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.subtractarr* ({a}, {b}, {iter})
+*arr.subtract* ({a}, {b}, {iter})
 
   Set containing those elements that are in array {a} but not in table {b}.
 

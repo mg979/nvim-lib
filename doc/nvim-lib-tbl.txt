@@ -257,7 +257,7 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*tbl.difference* ({a}, {b}, {iter})
+*tbl.subtract* ({a}, {b}, {iter})
 
   Set containing those elements that are in table A but not in table B.
   Default iterator is |pairs|, but another can be passed in the {iter}
