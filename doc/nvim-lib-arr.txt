@@ -3,6 +3,16 @@
     local arr = require("nvim-lib").arr
 <
 
+These functions are intended for arrays or sequences. The default iterator for
+all of them is |ipairs|, but with many of them you can provide an optional
+iterator. For example, |arr.npairs| if you don't want the iteration to stop at
+`nil` values.
+
+Where the function accepts a {fn} parameter, this can be a string.
+See |nvim-lib-fn-as-string|.
+
+
+
 MODULE FUNCTIONS
 ==============================================================================
 
@@ -10,6 +20,12 @@ MODULE FUNCTIONS
 
   Iterator for all elements of an array, not only those returned by ipairs
   (because it stops at the first nil value).
+  The iterator only returns non-nil values.
+
+  Note: this slower than either |pairs| or |ipairs| because it loops over all
+  potential indices of an array, checking the key type. It is meant for
+  specific use cases, and not where the array is certain to be a sequence,
+  |ipairs| in this case is much preferable.
 
   Parameters:~
     • {t} (table)
@@ -39,71 +55,83 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.maparr* ({t}, {fn}, {new})
+*arr.maparr* ({t}, {fn}, {new}, {iter})
                                                        |nvim-lib-fn-as-string|
   Map an array in place (or to new table) with {fn}.
   {fn} is called with (key, value) as arguments.
+
   Note: this function can create holes in an array.
+  Use |arr.mapseq| if you want to produce a sequence.
 
   Parameters:~
-    • {fn}  (function,string)
-    • {t}   (table)
-    • {new} (bool)
+    • {fn}   (function,string)
+    • {t}    (table)
+    • {new}  (bool)
+    • {iter} (function)
+
   Return:~
       (table)
 
 ------------------------------------------------------------------------------
 
-*arr.mapseq* ({t}, {fn})
+*arr.mapseq* ({t}, {fn}, {iter})
                                                        |nvim-lib-fn-as-string|
   Map an array with {fn}. Produce a new sequence.
   {fn} is called with (key, value) as arguments.
 
   Parameters:~
-    • {fn} (function,string)
-    • {t}  (table)
+    • {fn}   (function,string)
+    • {t}    (table)
+    • {iter} (function)
 
   Return:~
       (table)
 
 ------------------------------------------------------------------------------
 
-*arr.filterarr* ({t}, {fn}, {new})
+*arr.filterarr* ({t}, {fn}, {new}, {iter})
                                                        |nvim-lib-fn-as-string|
   Filter an array in place (or to new table) with {fn}.
   {fn} is called with (key, value) as arguments.
-  Note: this function can create holes in an array.
+
+  Note: this function is `LIKELY` to create holes in an array.
+  Use |arr.filterseq| if you want to produce a sequence.
 
   Parameters:~
-    • {fn}  (function,string)
-    • {t}   (table)
-    • {new} (bool)
+    • {fn}   (function,string)
+    • {t}    (table)
+    • {new}  (bool)
+    • {iter} (function)
 
   Return:~
     (table)
 
 ------------------------------------------------------------------------------
 
-*arr.filterseq* ({t}, {fn})
+*arr.filterseq* ({t}, {fn}, {iter})
                                                        |nvim-lib-fn-as-string|
   Filter an array with {fn}. Produce a new sequence.
   {fn} is called with (key, value) as arguments.
 
+  Note: this is the closest to the |vim.tbl_filter| behaviour.
+
   Parameters: ~
-    • {fn} (function,string)
-    • {t}  (table)
+    • {fn}   (function,string)
+    • {t}    (table)
+    • {iter} (function)
 
   Return: ~
     (table) merged table
 
 ------------------------------------------------------------------------------
 
-*arr.seq* ({t})
+*arr.seq* ({t}, {iter})
 
   Create a new sequence from an array, by removing holes.
 
   Parameters:~
-    • {t} (table)
+    • {t}    (table)
+    • {iter} (function)
 
   Return:~
     (boolean)
@@ -136,14 +164,15 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.indexof* ({t}, {v})
+*arr.indexof* ({t}, {v}, {iter})
 
   If an array contains a value, return its index.
   Return nil if the array doesn't contain the value.
 
   Parameters:~
-    • {t} (table)
-    • {v} (any)
+    • {t}    (table)
+    • {v}    (any)
+    • {iter} (function)
 
   Return:~
     (any) the value of the last nested key
@@ -153,12 +182,13 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.uniq* ({t})
+*arr.uniq* ({t}, {iter})
 
   Returns a copy of an array with all duplicate elements removed.
 
   Parameters:~
-    • {t} (table)
+    • {t}    (table)
+    • {iter} (function)
 
   Return:~
     (number)
@@ -170,7 +200,8 @@ MODULE FUNCTIONS
 
 *arr.slice* ({t}, {start}, {finish})
 
-  Creates a copy of an array containing only elements from {start} to {finish}.
+  Creates a copy of an array containing only elements from {start} to
+  {finish}.
 
   Parameters:~
     • {t}      (table)
@@ -214,13 +245,14 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.intersectarr* ({a}, {b})
+*arr.intersectarr* ({a}, {b}, {iter})
 
   Set containing those elements that are in both arrays {a} and {b}.
 
   Parameters:~
-    • {a} (table)
-    • {b} (table)
+    • {a}    (table)
+    • {b}    (table)
+    • {iter} (function)
 
   Return:~
     (table)
@@ -230,13 +262,14 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.subtractarr* ({a}, {b})
+*arr.subtractarr* ({a}, {b}, {iter})
 
   Set containing those elements that are in array {a} but not in table {b}.
 
   Parameters:~
-    • {a} (table)
-    • {b} (table)
+    • {a}    (table)
+    • {b}    (table)
+    • {iter} (function)
 
   Return:~
     (boolean)

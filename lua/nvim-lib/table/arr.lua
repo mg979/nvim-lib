@@ -17,12 +17,16 @@ local util = require("nvim-lib.util")
 function arr.npairs(t)
   local i, n = 0, util.length(t)
   return function()
+    while i < n do
+      i = i + 1
+      if t[i] ~= nil then
+        return i, t[i]
+      end
+    end
     i = i + 1
     if i <= n then return i, t[i] end
   end
 end
-
-local npairs = arr.npairs
 
 -------------------------------------------------------------------------------
 --- Create an array with numeric values, with a starting value, an ending value,
@@ -46,19 +50,18 @@ end
 --- Map an array in place (or to new table) with `fn`.
 --- `fn` is called with (key, value) as arguments.
 --- Note: this function can create holes in an array.
----@param fn function|string
 ---@param t table
----@param new bool
+---@param fn function|string
+---@param new bool|nil
+---@param iter function|nil
 ---@return table
-function arr.maparr(t, fn, new)
+function arr.maparr(t, fn, new, iter)
   local dst = new and {} or t
   if type(fn) == "string" then
     fn = util.kvfunc(fn)
   end
-  for k, v in npairs(t) do
-    if v ~= nil then
-      dst[k] = fn(k, v)
-    end
+  for k, v in (iter or ipairs)(t) do
+    dst[k] = fn(k, v)
   end
   return dst
 end
@@ -66,20 +69,19 @@ end
 -------------------------------------------------------------------------------
 --- Map an array with `fn`. Produce a new sequence.
 --- `fn` is called with (key, value) as arguments.
----@param fn function|string
 ---@param t table
+---@param fn function|string
+---@param iter function|nil
 ---@return table
-function arr.mapseq(t, fn)
+function arr.mapseq(t, fn, iter)
   local dst = {}
   if type(fn) == "string" then
     fn = util.kvfunc(fn)
   end
-  for k, v in npairs(t) do
-    if v then
-      v = fn(k, v)
-      if v ~= nil then
-        insert(dst, v)
-      end
+  for k, v in (iter or ipairs)(t) do
+    v = fn(k, v)
+    if v ~= nil then
+      insert(dst, v)
     end
   end
   return dst
@@ -89,26 +91,27 @@ end
 --- Filter an array in place (or to new table) with `fn`.
 --- `fn` is called with (key, value) as arguments.
 --- Note: this function can create holes in an array.
----@param fn function|string
 ---@param t table
----@param new bool
+---@param fn function|string
+---@param new bool|nil
+---@param iter function|nil
 ---@return table
-function arr.filterarr(t, fn, new)
+function arr.filterarr(t, fn, new, iter)
   local dst
   if type(fn) == "string" then
     fn = util.kvfunc(fn)
   end
   if new then
     dst = {}
-    for k, v in npairs(t) do
-      if v and fn(k, v) then
+    for k, v in (iter or ipairs)(t) do
+      if fn(k, v) then
         dst[k] = v
       end
     end
   else
     dst = t
-    for k, v in npairs(t) do
-      if v ~= nil and not fn(k, v) then
+    for k, v in (iter or ipairs)(t) do
+      if not fn(k, v) then
         dst[k] = nil
       end
     end
@@ -119,16 +122,17 @@ end
 -------------------------------------------------------------------------------
 --- Filter an array with `fn`. Produce a new sequence.
 --- `fn` is called with (key, value) as arguments.
----@param fn function|string
 ---@param t table
+---@param fn function|string
+---@param iter function|nil
 ---@return table
-function arr.filterseq(t, fn)
+function arr.filterseq(t, fn, iter)
   local dst = {}
   if type(fn) == "string" then
     fn = util.kvfunc(fn)
   end
-  for k, v in npairs(t) do
-    if v ~= nil and fn(k, v) then
+  for k, v in (iter or ipairs)(t) do
+    if fn(k, v) then
       insert(dst, v)
     end
   end
@@ -138,13 +142,12 @@ end
 -------------------------------------------------------------------------------
 --- Create a new sequence from an array, by removing holes.
 ---@param t table
+---@param iter function|nil
 ---@return table
-function arr.seq(t)
+function arr.seq(t, iter)
   local dst = {}
-  for _, v in npairs(t) do
-    if v ~= nil then
-      insert(dst, v)
-    end
+  for _, v in (iter or ipairs)(t) do
+    insert(dst, v)
   end
   return dst
 end
@@ -181,9 +184,10 @@ end
 --- Return nil if the array doesn't contain the value.
 ---@param t table
 ---@param v any
+---@param iter function|nil
 ---@return number|nil
-function arr.indexof(t, v)
-  for k, _v in ipairs(t) do
+function arr.indexof(t, v, iter)
+  for k, _v in (iter or ipairs)(t) do
     if _v == v then
       return k
     end
@@ -194,11 +198,12 @@ end
 --- Returns a copy of an array with all duplicate elements removed.
 ---@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
 ---@param t table
+---@param iter function|nil
 ---@return table
-function arr.uniq(t)
+function arr.uniq(t, iter)
   local seen = { }
   local result = { }
-  for _, v in npairs(t) do
+  for _, v in (iter or ipairs)(t) do
     if not seen[v] then
       table.insert(result, v)
       seen[v] = true
@@ -245,16 +250,17 @@ function arr.extend(dst, src, at, start, finish)
 end
 
 -------------------------------------------------------------------------------
---- Flattens a hierarchy of arrays into a single array containing all of the
+--- Flattens a hierarchy of arrays into a single sequence containing all of the
 --- values.
 ---@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
 ---@param t table
+---@param iter function|nil
 ---@return table
-function arr.flatten(t)
+function arr.flatten(t, iter)
   local result = {}
 
   local function _flatten(t_)
-    for _, v in npairs(t_) do
+    for _, v in (iter or ipairs)(t_) do
       if type(v) == "table" then
         _flatten(v)
       elseif v then
@@ -272,11 +278,12 @@ end
 ---@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
 ---@param a table
 ---@param b table
+---@param iter function|nil
 ---@return table
-function arr.intersectarr(a, b)
+function arr.intersectarr(a, b, iter)
   local result = {}
-  for _, v in npairs(b) do
-    if arr.indexof(a, v) then
+  for _, v in (iter or ipairs)(b) do
+    if arr.indexof(a, v, iter) then
       insert(result, v)
     end
   end
@@ -287,11 +294,12 @@ end
 --- Set containing those elements that are in array A but not in table B.
 ---@param a table
 ---@param b table
+---@param iter function|nil
 ---@return table
-function arr.subtractarr(a, b)
+function arr.subtractarr(a, b, iter)
   local result = {}
-  for _, v in ipairs(a) do
-    if not arr.indexof(b, v) then
+  for _, v in (iter or ipairs)(a) do
+    if not arr.indexof(b, v, iter) then
       insert(result, v)
     end
   end

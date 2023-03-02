@@ -193,20 +193,20 @@ MODULE - ARR                                                    *nvim-lib-arr*
     ---------------------------------------------------------~
     `npairs`          t                 iterator that doesn't skip nil values
     `range`           n, m, step        cf. |range()|
-    `maparr`          t, fn, new        map an array with {fn}
-    `mapseq`          t, fn             map an array to a new sequence
-    `filterarr`       t, fn, new        filter an array with {fn}
-    `filterseq`       t, fn             filter an array to a new sequence {1}
-    `seq`             t                 new sequence from array, removing holes
+    `maparr`          t, fn, ne, iter   map an array with {fn}
+    `mapseq`          t, f, iter        map an array to a new sequence
+    `filterarr`       t, fn, ne, iter   filter an array with {fn}
+    `filterseq`       t, fn, iter       filter an array to a new sequence {1}
+    `seq`             t, iter           new sequence from array, removing holes
     `isseq`           t                 false if there are holes in the array
     `isarr`           t                 false if there are non-numerical indices
-    `indexof`         t, v              finds index of value in the array
-    `uniq`            t                 new array with removed duplicates
+    `indexof`         t, v, iter        finds index of value in the array
+    `uniq`            t, iter           new array with removed duplicates
     `slice`           t, s, f           new array that is a slice of the first
     `extend`          a, b, at, s, f    append/insert an array in another
-    `flatten`         t                 nested arrays in a linear array
-    `intersectarr`    a, b              common `values` between a and b
-    `subtractarr`     a, b              only `values` that belong to a and not b
+    `flatten`         t, iter           nested arrays in a linear array
+    `intersectarr`    a, b, iter        common `values` between a and b
+    `subtractarr`     a, b, iter        only `values` that belong to a and not b
 
   {1} this is the closest to |vim.tbl_filter| behaviour.
 

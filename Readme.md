@@ -96,7 +96,6 @@ Map/filter functions can also be a string (similar to vimscript `map()`).
     replace         t, val, rep, iter
     keys            t
     values          t
-    flatten         t
     contains        t, val
     deepcopy        object
     equal           a, b, deep
@@ -115,6 +114,7 @@ Help files:
     local arr = require("nvim-lib").arr
 
 Functions that are more specialized in handling arrays and sequences.
+They use `ipairs` as default iterator.
 
 There is a new iterator (`arr.npairs`) that can iterate arrays without skipping
 nil values (as `ipairs` does instead), so it can be used to iterate arrays, and
@@ -126,19 +126,20 @@ Map/filter functions can also be a string (similar to vimscript `map()`).
     ------------------------------------
     npairs          t
     range           n, m, step
-    maparr          t, fn, new
-    mapseq          t, fn
-    filterarr       t, fn, new
-    filterseq       t, fn
-    seq             t
+    maparr          t, fn, new, iter
+    mapseq          t, fn, iter
+    filterarr       t, fn, new, iter
+    filterseq       t, fn, iter
+    seq             t, iter
     isseq           t
     isarr           t
-    indexof         t, v
-    uniq            t
+    indexof         t, v, iter
+    uniq            t, iter
     slice           t, start, finish
     extend          dst, src, at, start, finish
-    intersectarr    a, b
-    subtractarr     a, b
+    flatten         t, iter
+    intersectarr    a, b, iter
+    subtractarr     a, b, iter
 
 Help files:
 
