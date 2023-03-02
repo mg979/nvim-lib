@@ -97,7 +97,6 @@ MODULE - NVIM                                                  *nvim-lib-nvim*
     `yesno`           question
     `popup`           o
     `bufsize`         buf
-    `eval`            expr, throw
     `try`             o
     `search`          pat, flags, stopline, timeout, skip
     `testspeed`       cmd, cnt, title
@@ -269,7 +268,9 @@ NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
 
   Can be found at (|gf| over path): `$VIMRUNTIME/lua/vim/shared.lua`
 
-  Forgive me for my impudence, but I think the |vim.tbl_|* stuff is horrible.
+  WARNING: polemic tones ahead!
+
+  Forgive me for my impudence, but I think the |vim.tbl_|* stuff is bad.
   Many of those functions do some sort of table validation: maybe it's needed
   for |vim.lsp| but I doubt anybody else needs it this bad.
   In some cases at least, this validation makes also mandatory parameters that
@@ -281,7 +282,7 @@ NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
   from reading the documentation:
   - it creates a new table
   - it assumes {table} is an array
-  - it will actually FLATTEN an associative table to an array with the
+  - it will actually CHANGE an associative table to an array with the
     filtered values (in the copy of course), so that information about keys is
     lost!
 

@@ -308,17 +308,6 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*nvim.eval* ({expr}, {throw})
-
-  |pcall|-ed version of |vim.fn.eval()|. Doesn't throw the error, unless second
-  argument is `true`.
-
-  Parameters: ~
-    • {expr}    (string)  vimscript expression
-    • {throw}   (boolean) actually throw an error or not
-
-------------------------------------------------------------------------------
-
 *nvim.search* ({pattern}, {flags}, {stopline}, {timeout}, {skip})
 
   Alternative to vim.fn.search that uses `very-magic` by default, calls

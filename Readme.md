@@ -43,13 +43,13 @@ Currently provides the following functions:
     setlines        buf, lines, start, finish
     scratchbuf      lines, opts
     commands        cmds
+    mappings        maps
     augroup         name
     echo            opts, opts2
     echoerr         text
     yesno           question
     popup           opts
     bufsize         buf
-    eval            expr, throw
     try             opts
     search          pat, flags, stopline, timeout, skip
     testspeed       cmd, cnt, title
@@ -58,10 +58,12 @@ Also:
 
     nvim.reg        table to access vim registers
     nvim.keycodes   table with on-demand termcodes generation
+    nvim.pos        table for easy access to marks and other positions
 
 Help file:
 
     :help nvim-lib-nvim
+    :help nvim-lib-tables
 
 
 -------------------------------------------------------------------------------
@@ -148,5 +150,5 @@ Help files:
 
 ## config
 
-Because I'm annoyed by the convetion that has become dominant in the Neovim
+Because I'm annoyed by the convention that has become dominant in the Neovim
 plugin ecosystem. More informations in [config.md](./config.md).
