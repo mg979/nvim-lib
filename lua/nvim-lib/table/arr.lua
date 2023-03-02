@@ -212,8 +212,8 @@ function arr.uniq(t, iter)
   return result
 end
 
+-------------------------------------------------------------------------------
 --- Creates a copy of an array containing only elements from start to end.
----
 ---@param t table
 ---@param start number: Start range of slice
 ---@param finish number: End range of slice (inclusive)
@@ -223,6 +223,23 @@ function arr.slice(t, start, finish)
   for i = start or 1, finish or util.length(t) do
     dst[n] = t[i]
     n = n + 1
+  end
+  return dst
+end
+
+-------------------------------------------------------------------------------
+--- Reverse an array, in place or to a new array.
+---@param t table
+---@param new bool
+---@return table
+function arr.reverse(t, new)
+  local dst = new and {} or t
+  local n = util.length(t)
+  local i = 1
+  while i < n do
+    dst[i], dst[n] = t[n], t[i]
+    i = i + 1
+    n = n - 1
   end
   return dst
 end

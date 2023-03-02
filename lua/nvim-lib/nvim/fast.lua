@@ -93,4 +93,18 @@ function nvim.bufsize(buf)
   return api.buf_get_offset(buf or 0, api.buf_line_count(buf or 0))
 end
 
+-------------------------------------------------------------------------------
+--- Return the path of the script from where the function is called.
+function nvim.scriptname()
+  return debug.getinfo(2).source:match('@?(.*)')
+end
+
+
+
+
+
+--------------------------------------------------------------------------------
+-- End of module
+--------------------------------------------------------------------------------
+
 return nvim

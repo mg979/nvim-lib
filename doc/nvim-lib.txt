@@ -97,6 +97,7 @@ MODULE - NVIM                                                  *nvim-lib-nvim*
     `yesno`           question
     `popup`           o
     `bufsize`         buf
+    `scriptname`
     `try`             o
     `search`          pat, flags, stopline, timeout, skip
     `testspeed`       cmd, cnt, title
@@ -146,7 +147,7 @@ MODULE - TBL                                                    *nvim-lib-tbl*
   Also, they never do table validation. You're responsible for that.
 
   Some functions have an `iter` parameter, meaning they accept an iterator
-  function, default is |pairs| (such as |ipairs|, |npairs|, |spairs|).
+  function, default is |pairs|.
 
     function    arguments       notes~
     ---------------------------------------------------------~
@@ -189,13 +190,16 @@ MODULE - ARR                                                    *nvim-lib-arr*
 <
   Functions that are more specialized in handling arrays and sequences.
 
+  Some functions have an `iter` parameter, meaning they accept an iterator
+  function, default is |ipairs|.
+
     function        arguments         notes~
     ---------------------------------------------------------~
     `npairs`          t                 iterator that doesn't skip nil values
     `range`           n, m, step        cf. |range()|
-    `maparr`          t, fn, ne, iter   map an array with {fn}
+    `maparr`          t, fn, new, iter  map an array with {fn}
     `mapseq`          t, f, iter        map an array to a new sequence
-    `filterarr`       t, fn, ne, iter   filter an array with {fn}
+    `filterarr`       t, fn, new, iter  filter an array with {fn}
     `filterseq`       t, fn, iter       filter an array to a new sequence {1}
     `seq`             t, iter           new sequence from array, removing holes
     `isseq`           t                 false if there are holes in the array
@@ -203,6 +207,7 @@ MODULE - ARR                                                    *nvim-lib-arr*
     `indexof`         t, v, iter        finds index of value in the array
     `uniq`            t, iter           new array with removed duplicates
     `slice`           t, s, f           new array that is a slice of the first
+    `reverse`         t, new            reverse array, in place or not
     `extend`          a, b, at, s, f    append/insert an array in another
     `flatten`         t, iter           nested arrays in a linear array
     `intersectarr`    a, b, iter        common `values` between a and b
@@ -224,7 +229,7 @@ TABLE FUNCTIONS AS STRING                              *nvim-lib-fn-as-string*
   must be used. Example:
 >lua
     -- this increases all values in the array by 1
-    local t = tbl.map({1, 2, 3}, "_V + 1")
+    local t = tbl.map({ 1, 2, 3 }, "_V + 1")
 <
   Note: there are differences with the vimscript implementation:
 
@@ -237,8 +242,8 @@ TABLE FUNCTIONS AS STRING                              *nvim-lib-fn-as-string*
     With local names there shouldn't be problems, while with upvalues there
     could be, because not everything that is defined in outer scopes is
     returned by |debug.getupvalue()| (at least in LuaJIT, can't say for Lua),
-    but only the names that have been accessed up to that moment.
-    Global names should be visible anyway. This rules out:
+    but only the names that have been accessed up to that moment (in the
+    current scope?). Global names should be visible anyway. This rules out:
 
     • outer local functions that have never been called
     • outer variables (including tables) that have never been accessed
@@ -286,7 +291,7 @@ NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
     filtered values (in the copy of course), so that information about keys is
     lost!
 
-  So it's not really a filtering function, it's something entirely different.
+  So it's not simply a filtering function, it's something different.
   It has its uses: it just isn't what you'd expect it to be. And what it
   actually is, isn't documented. And if you don't know what it is, it could
   screw up your tables with you wondering why it's happening.

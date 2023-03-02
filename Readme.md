@@ -136,6 +136,7 @@ Map/filter functions can also be a string (similar to vimscript `map()`).
     indexof         t, v, iter
     uniq            t, iter
     slice           t, start, finish
+    reverse         t, new
     extend          dst, src, at, start, finish
     flatten         t, iter
     intersectarr    a, b, iter

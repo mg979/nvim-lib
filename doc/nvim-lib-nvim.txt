@@ -308,6 +308,15 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
+*nvim.scriptname* ()
+
+  Return the full path of the script from where the function is called.
+
+  Return: ~
+    (string)
+
+------------------------------------------------------------------------------
+
 *nvim.search* ({pattern}, {flags}, {stopline}, {timeout}, {skip})
 
   Alternative to vim.fn.search that uses `very-magic` by default, calls

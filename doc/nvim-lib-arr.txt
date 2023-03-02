@@ -23,9 +23,9 @@ MODULE FUNCTIONS
   The iterator only returns non-nil values.
 
   Note: this slower than either |pairs| or |ipairs| because it loops over all
-  potential indices of an array, checking the key type. It is meant for
-  specific use cases, and not where the array is certain to be a sequence,
-  |ipairs| in this case is much preferable.
+  potential indices of an array. It is meant for specific use cases, and not
+  where the array is certain to be a sequence, |ipairs| in this case is much
+  preferable.
 
   Parameters:~
     • {t} (table)
@@ -134,7 +134,7 @@ MODULE FUNCTIONS
     • {iter} (function)
 
   Return:~
-    (boolean)
+    (table)
 
 ------------------------------------------------------------------------------
 
@@ -207,6 +207,22 @@ MODULE FUNCTIONS
     • {t}      (table)
     • {start}  (number)   Start range of slice
     • {finish} (number)   End range of slice (inclusive)
+
+  Return:~
+    (table)
+
+------------------------------------------------------------------------------
+
+*arr.reverse* ({t}, {new})
+
+  Reverse an array, in place or to a new array.
+
+  Parameters:~
+    • {t}    (table)
+    • {new}  (boolean)
+
+  Return:~
+    (table)
 
 ------------------------------------------------------------------------------
 
