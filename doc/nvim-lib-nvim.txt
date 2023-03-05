@@ -319,8 +319,8 @@ MODULE FUNCTIONS
 
 *nvim.search* ({pattern}, {flags}, {stopline}, {timeout}, {skip})
 
-  Alternative to vim.fn.search that uses `very-magic` by default, calls
-  vim.fn.searchpos, and supports some additional flags:
+  Alternative to |search()| that uses `very-magic` by default, calls
+  |searchpos()|, and supports some additional flags:
 
     `m` - magic search
     `M` - nomagic search
@@ -331,11 +331,17 @@ MODULE FUNCTIONS
   The pattern can be a table, that will be concatenated with "\|".
 
   Return: ~
-    (nil)       if the pattern isn't found
-    (row, col)  position of found pattern
+    (nil) if the pattern isn't found
+
+    (number, number, string, string)
+      • `row` and `column` of the match
+      • `match`, as found with |matchstr()| on the position
+      • `pattern` used to find the match (can be different from the one
+        provided as argument)
+      
 
   See also: ~
-    |search()|
+    |search()|, |searchpos()|, |matchstr()|
 
 ------------------------------------------------------------------------------
 

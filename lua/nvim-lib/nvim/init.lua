@@ -284,7 +284,11 @@ end
 ---
 --- The pattern can be a table, that will be concatenated with "\|".
 --- The function returns nil if the pattern isn't found, otherwise returns
---- a tuple (row, col) (the position of the match).
+--- a tuple:
+--- • row: line number of the match (1-indexed)
+--- • col: column of the match (1-indexed)
+--- • match: string with the found match
+--- • pat: string with the pattern used
 ---
 ---@param pat string|table
 ---@param flags string
@@ -319,7 +323,14 @@ function nvim.search(pat, flags, stopline, timeout, skip)
 
   local ret = fn.searchpos(pat, flags, stopline, timeout, skip)
   if ret[1] > 0 then
-    return unpack(ret)
+    local row, col = unpack(ret)
+    -- if smartcase is enabled and there are no uppercase chars in the pattern,
+    -- perform case-insensitive pattern matching
+    if not i and not I and not pat:find('[A-Z]') and vim.o.smartcase then
+      pat = "\\c" .. pat
+    end
+    local str = fn.matchstr(fn.getline(ret[1]), pat, ret[2] - 1)
+    return row, col, str, pat
   end
   return nil
 end
