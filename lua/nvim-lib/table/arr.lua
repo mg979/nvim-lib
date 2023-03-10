@@ -166,8 +166,32 @@ end
 ---@param finish number: End range of slice (inclusive)
 ---@return table: Copy of table sliced from start to finish
 function arr.slice(t, start, finish)
-  local dst, n = {}, 1
-  for i = start or 1, finish or util.length(t) do
+  local dst, n, len = {}, 1, false
+  start = start or 1
+  if start == 0 or finish == 0 then
+    return {}
+  end
+  if start < 0 then
+    len = util.length(t)
+    if start < -len then
+      start = 1
+    else
+      start = len + start + 1
+    end
+  end
+  finish = finish or len or util.length(t)
+  if finish < 0 then
+    len = len or util.length(t)
+    if finish < -len then
+      finish = 1
+    else
+      finish = len + finish + 1
+    end
+  end
+  if start > finish then
+    return {}
+  end
+  for i = start, finish do
     dst[n] = t[i]
     n = n + 1
   end

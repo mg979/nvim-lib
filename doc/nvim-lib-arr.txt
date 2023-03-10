@@ -168,6 +168,11 @@ MODULE FUNCTIONS
 
   Creates a copy of an array containing only elements from {start} to
   {finish}.
+  If either {start} or {finish} are 0, an empty table is returned.
+  If {start} or {finish} are negative, they are considered relative
+  to the end of the array (eg. -1 means the last element).
+  Values more negative than the length of the array mean the first element.
+  If {start} > {finish}, an empty table is returned.
 
   Parameters:~
     • {t}      (table)
@@ -177,6 +182,15 @@ MODULE FUNCTIONS
   Return:~
     (table)
 
+  Example:~
+>lua
+    local t = {1, 2, 3, 4, 5}
+    arr.slice(t, 3) -- { 3, 4, 5 }
+    arr.slice(t, 2, 4) -- { 2, 3, 4 }
+    arr.slice(t, -4, 4) -- { 2, 3, 4 }
+    arr.slice(t, -5, 4) -- { 1, 2, 3, 4 }
+    arr.slice(t, -6, 4) -- { 1, 2, 3, 4 } too!
+<
 ------------------------------------------------------------------------------
 
 *arr.reverse* ({t}, {new})
