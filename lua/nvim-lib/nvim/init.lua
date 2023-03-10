@@ -154,19 +154,19 @@ end
 
 -------------------------------------------------------------------------------
 --- Create a popup window. Default position is at cursor.
---- There are two callbacks: on_show (called when shown) and on_hide (just
---- before hiding).
+--- If `wid` is given, try to reconfigure that window, if it is still valid.
 ---
 ---@param o table: { [1] = lines, buf = n, bufopts = {}, winopts = {}, ... (options) }
+---@param wid number: previous window to reconfigure
 ---@return number,number,table: buffer, winid, window configuration
-function nvim.popup(o)
+function nvim.popup(o, wid)
   if type(o) == "string" then
     o = { o }
   end
   local lines = o.lines or o[1] or {}
   lines = type(lines) == "string" and vim.split(lines, "\n", { trimempty = true }) or lines
   local buf = o.buf or nvim.scratchbuf(lines, o.bufopts)
-  local win = api.open_win(buf, o.enter, {
+  local cfg = {
     relative = o.relative or "cursor",
     win = o.relative == "win" and (o.win or api.get_current_win()) or nil,
     anchor = o.anchor or "NW",
@@ -180,7 +180,14 @@ function nvim.popup(o)
     style = o.style or "minimal",
     border = o.border,
     noautocmd = o.noautocmd,
-  })
+  }
+  local win
+  if wid and api.win_is_valid(wid) then
+    win = wid
+    api.win_set_config(win, cfg)
+  else
+    win = api.open_win(buf, o.enter, cfg)
+  end
   api.win_set_option(win, "cursorline", false)
   api.win_set_option(win, "number", false)
   api.win_set_option(win, "signcolumn", "no")

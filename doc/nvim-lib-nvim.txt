@@ -271,7 +271,7 @@ MODULE FUNCTIONS
 
 *nvim.popup* ({opts})
 
-  Relatively minimal popup displayer, what could be done in <50 LOC.
+  Relatively minimal popup displayer.
   The buffer is created as scratch if not given, and wiped afterwards.
 
   Default position is `at cursor`, width is `80`, height is `#lines`.
@@ -288,6 +288,7 @@ MODULE FUNCTIONS
         • {close_on} (table)         events that close the popup (optional)
         • {...}      (...)           options for |nvim_open_win()| are given in
                                      the same table.
+    • {win} (number)  popup window to reconfigure, if {win} is still valid.
 
   Return: ~
     (number, number, table) buffer number, window id, window configuration
