@@ -187,26 +187,25 @@ function nvim.popup(o)
   for k, v in pairs(o.winopts or {}) do
     api.win_set_option(win, k, v)
   end
-  if o.on_show then
-    o.on_show(buf, win, api.win_get_config(win))
-  end
   local close_on = o.close_on
                 or o.enter and { "WinLeave" }
                 or o.focusable and { "TabLeave" }
                 or { "BufLeave", "CursorMoved", "CursorMovedI" }
-  api.create_autocmd(close_on, {
-    callback = function(_)
-      if o.on_hide and api.win_is_valid(win) then
-        o.on_hide()
-      end
-      pcall(api.win_close, win, { force = true })
-      if not o.buf then
-        pcall(api.buf_delete, buf, { force = true })
-      end
-      return true
-    end,
-    once = true,
-  })
+  if close_on then
+    api.create_autocmd(close_on, {
+      callback = function(_)
+        if o.on_hide and api.win_is_valid(win) then
+          o.on_hide()
+        end
+        pcall(api.win_close, win, { force = true })
+        if not o.buf then
+          pcall(api.buf_delete, buf, { force = true })
+        end
+        return true
+      end,
+      once = true,
+    })
+  end
   return buf, win, api.win_get_config(win)
 end
 

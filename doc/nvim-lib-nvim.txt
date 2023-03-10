@@ -286,9 +286,11 @@ MODULE FUNCTIONS
         • {bufopts}  (table)         additional buffer options (scratch only)
         • {winopts}  (table)         additional window options
         • {close_on} (table)         events that close the popup (optional)
-        • {on_show}  (function)      callback with args (bufnr, winid, wincfg)
         • {...}      (...)           options for |nvim_open_win()| are given in
                                      the same table.
+
+  Return: ~
+    (number, number, table) buffer number, window id, window configuration
 
   Example: ~
 >lua
@@ -338,7 +340,7 @@ MODULE FUNCTIONS
       • `match`, as found with |matchstr()| on the position
       • `pattern` used to find the match (can be different from the one
         provided as argument)
-      
+
 
   See also: ~
     |search()|, |searchpos()|, |matchstr()|
