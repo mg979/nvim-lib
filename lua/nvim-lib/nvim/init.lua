@@ -172,15 +172,19 @@ function nvim.popup(o, wid)
     anchor = o.anchor or "NW",
     width = o.width or 80,
     height = o.height or #lines,
-    col = o.col or 1,
-    row = o.row or 1,
-    focusable = o.enter or o.focusable,
+    focusable = o.enter or (o.focusable ~= nil and o.focusable),
     bufpos = o.relative == "win" and o.bufpos or nil,
     zindex = o.zindex,
     style = o.style or "minimal",
     border = o.border,
     noautocmd = o.noautocmd,
   }
+  cfg.row = o.row
+    or o.relative == "win" and 0
+    or o.relative == "editor" and (vim.o.lines / 2 - cfg.height / 2) or 1
+  cfg.col = o.col
+    or o.relative == "win" and 0
+    or o.relative == "editor" and (vim.o.columns / 2 - cfg.width / 2) or 1
   local win
   if wid and api.win_is_valid(wid) then
     win = wid

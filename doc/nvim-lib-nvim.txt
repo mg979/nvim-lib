@@ -2,6 +2,8 @@
 >lua
     local nvim = require("nvim-lib").nvim
 <
+Unless specified, arguments after the first are optional.
+
 
 MODULE FUNCTIONS
 ==============================================================================
@@ -269,12 +271,28 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*nvim.popup* ({opts})
+*nvim.popup* ({opts}, {win})
 
-  Relatively minimal popup displayer.
+  Relatively minimal popup displayer (~60 LOC).
   The buffer is created as scratch if not given, and wiped afterwards.
 
-  Default position is `at cursor`, width is `80`, height is `#lines`.
+  If {win} is given, it must be a previously opened popup: if the window is
+  still valid, it will be reused and reconfigured. This avoids flicker.
+
+  To run some code inside the popup after creation, remember that you can use
+  |nvim_win_call()| and |nvim_buf_call()|.
+
+  Default configuration is:
+
+    `relative`      "cursor"
+    `anchor`        "NW"
+    `width`         80
+    `height`        number of lines
+    `col`           1 ("cursor"), 0 ("window"), centered ("editor")
+    `row`           1 ("cursor"), 0 ("window"), centered ("editor")
+    `focusable`     {enter}
+    `style`         "minimal"
+
   Options are optional for the most part, but either {buf} or [1] should be
   given.
 
@@ -291,11 +309,13 @@ MODULE FUNCTIONS
     • {win} (number)  popup window to reconfigure, if {win} is still valid.
 
   Return: ~
-    (number, number, table) buffer number, window id, window configuration
+     number =>   buffer number,
+     number =>   window id,
+     table  =>   window configuration
 
   Example: ~
 >lua
-      nvim.popup({ text, enter = true, border = "rounded" })
+      buf, win, cfg = nvim.popup({ text, enter = true, border = "rounded" })
 <
 
 ------------------------------------------------------------------------------
