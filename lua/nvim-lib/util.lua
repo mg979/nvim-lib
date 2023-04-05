@@ -36,7 +36,7 @@ local function get_local_env(f)
   for k, v in pairs(locals()) do
     variables[k] = v
   end
-  return variables
+  return setmetatable(variables, { __index = _G })
 end
 
 -------------------------------------------------------------------------------
@@ -55,7 +55,8 @@ function M.kvfunc(string)
       error("nvim-lib: Error in resolving function environment.")
     end
   end
-  local func = load("return function(_K, _V) return " .. string .. " end")()
+  string = "return function(_K, _V) return " .. string .. " end"
+  local func = assert(loadstring(string))()
   setfenv(func, get_local_env(caller))
   return func
 end
