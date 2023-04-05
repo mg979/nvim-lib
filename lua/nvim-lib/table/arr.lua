@@ -7,6 +7,7 @@
 --------------------------------------------------------------------------------
 local arr = {}
 local insert = table.insert
+local maxn = table.maxn
 local util = require("nvim-lib.util")
 
 -------------------------------------------------------------------------------
@@ -15,16 +16,14 @@ local util = require("nvim-lib.util")
 ---@param t table
 ---@return function
 function arr.npairs(t)
-  local i, n = 0, util.length(t)
+  local i, n = 0, maxn(t)
   return function()
-    while i < n do
+    while i <= n do
       i = i + 1
       if t[i] ~= nil then
         return i, t[i]
       end
     end
-    i = i + 1
-    if i <= n then return i, t[i] end
   end
 end
 
@@ -172,16 +171,16 @@ function arr.slice(t, start, finish)
     return {}
   end
   if start < 0 then
-    len = util.length(t)
+    len = maxn(t)
     if start < -len then
       start = 1
     else
       start = len + start + 1
     end
   end
-  finish = finish or len or util.length(t)
+  finish = finish or len or maxn(t)
   if finish < 0 then
-    len = len or util.length(t)
+    len = len or maxn(t)
     if finish < -len then
       finish = 1
     else
@@ -205,7 +204,7 @@ end
 ---@return table
 function arr.reverse(t, new)
   local dst = new and {} or t
-  local n = util.length(t)
+  local n = maxn(t)
   local i = 1
   while i < n do
     dst[i], dst[n] = t[n], t[i]
@@ -225,12 +224,12 @@ end
 ---@return table
 function arr.extend(dst, src, at, start, finish)
   if at then
-    for i = start or 1, finish or util.length(src) do
+    for i = start or 1, finish or maxn(src) do
       table.insert(dst, at, src[i])
       at = at + 1
     end
   else
-    for i = start or 1, finish or util.length(src) do
+    for i = start or 1, finish or maxn(src) do
       table.insert(dst, src[i])
     end
   end
@@ -292,6 +291,16 @@ function arr.subtract(a, b, iter)
     end
   end
   return result
+end
+
+function arr.max(t, start, iter)
+  local max = start or 0
+  for _, v in (iter or ipairs)(t) do
+    if v > max then
+      max = v
+    end
+  end
+  return max
 end
 
 return arr
