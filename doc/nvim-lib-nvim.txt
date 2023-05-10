@@ -97,10 +97,12 @@ MODULE FUNCTIONS
 *nvim.augroup* ({name})
 
   Create an |augroup|, to be filled with autocommands to be declared in the
-  returning function. The autocommands belong to the defined augroup. The id
-  of the augroup is the return value of the returning function. Example:
+  returning function. The autocommands belong to the defined augroup.
+  The returning function has 2 return values:
+    • the augroup id
+    • an array with the autocommands ids
 >lua
-    local aug_id = nvim.augroup(aug_name) {
+    local aug_id, au_ids = nvim.augroup(aug_name) {
       {
         {"BufNewFile", "BufReadPost"},
         command = ":UserCommandToRun"
@@ -118,7 +120,9 @@ MODULE FUNCTIONS
 
   Return: ~
     (function({table}))   Function accepting a list-like table with
-                          autocommands definitions.
+                          autocommands definitions, in turn returning:
+                          • the augroup id
+                          • an array with the autocommands ids
   See also: ~
     |nvim_create_augroup()|
     |nvim_create_autocmd()|

@@ -56,10 +56,13 @@ end
 -------------------------------------------------------------------------------
 --- Create an augroup, to be filled with autocommands to be declared in the
 --- returning function. The autocommands belong to the defined augroup.
---- The id of the augroup is the return value of the returning function.
+--- The returning function has 2 return values:
+---   • the augroup id
+---   • an array with the autocommands ids
+---
 --- Example:
 ---
----   local aug_id = nvim.augroup(aug_name) {
+---   local aug_id, au_ids = nvim.augroup(aug_name) {
 ---     {
 ---       {"BufNewFile", "BufReadPost"},
 ---       command = ":UserCommandToRun"
@@ -69,15 +72,15 @@ end
 ---@param name string
 ---@return function
 function nvim.augroup(name)
-  local id = api.create_augroup(name, { clear = true })
+  local id, ids = api.create_augroup(name, { clear = true }), {}
   return function(autocmds)
     for _, v in ipairs(autocmds) do
       local events = v[1]
       v[1] = nil
       v.group = id
-      api.create_autocmd(events, v)
+      table.insert(ids, api.create_autocmd(events, v))
     end
-    return id
+    return id, ids
   end
 end
 
