@@ -40,7 +40,7 @@ end
 --- Each key of the table is a `lhs` for a mapping. Its value can be:
 --- 1. a string: a vim command for the `rhs`, with default options
 --- 2. a function: the `rhs`, with default options
---- 3. a table with keys: rhs, mode, {opts} or any option for vim.keymap.set
+--- 3. a table with keys: `rhs`, `mode`, `opts` or any option for vim.keymap.set
 ---@param maps table
 function nvim.mappings(maps)
   for lhs, map in pairs(maps) do

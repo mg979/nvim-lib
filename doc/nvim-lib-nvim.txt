@@ -94,6 +94,20 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
+*nvim.mappings* ({maps})
+
+  Set any number of mappings with vim.keymap.set.
+  Each key of the table is a `lhs` for a mapping. Its value can be:
+  • string     a vim command for the `rhs`, with default options
+  • function   the `rhs`, with default options
+  • table      with keys: `rhs`, `mode`, `opts` or any option for
+               |vim.keymap.set|.
+
+Parameters: ~
+  • {maps} (table)
+
+------------------------------------------------------------------------------
+
 *nvim.augroup* ({name})
 
   Create an |augroup|, to be filled with autocommands to be declared in the

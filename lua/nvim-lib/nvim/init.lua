@@ -55,12 +55,9 @@ end
 function nvim.scratchbuf(lines, opts)
   local bnr = api.create_buf(false, true)
   nvim.setlines(bnr, lines)
-  if not opts then
-    api.buf_set_option(bnr, "bufhidden", "wipe")
-  else
-    for k, v in pairs(opts or {}) do
-      api.buf_set_option(bnr, k, v)
-    end
+  api.buf_set_option(bnr, "bufhidden", "wipe")
+  for k, v in pairs(opts or {}) do
+    api.buf_set_option(bnr, k, v)
   end
   return bnr
 end
@@ -90,6 +87,16 @@ end
 ---
 ---@param o table|string
 function nvim.echo(o, o2)
+  assert(
+    type(o) == "string" or type(o) == "table",
+    "argument #1 must be string or table"
+  )
+  if o2 then
+    assert(
+      type(o2) == "string" or type(o2) == "table" or type(o2) == "boolean",
+      "argument #2 must be string or table"
+    )
+  end
   o2 = o2 or {}
   if type(o2) == "string" then
     o2 = { highlight = o2 }
@@ -202,7 +209,7 @@ function nvim.popup(o, wid)
                 or o.enter and { "WinLeave" }
                 or o.focusable and { "TabLeave" }
                 or { "BufLeave", "CursorMoved", "CursorMovedI" }
-  if close_on then
+  if next(close_on) then
     api.create_autocmd(close_on, {
       callback = function(_)
         if o.on_hide and api.win_is_valid(win) then
