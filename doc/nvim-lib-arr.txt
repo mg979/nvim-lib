@@ -148,13 +148,18 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.uniq* ({t}, {iter})
+*arr.uniq* ({t}, {sort}, {iter})
 
   Returns a copy of an array with all duplicate elements removed.
 
   Parameters:~
     • {t}    (table)
-    • {iter} (function)
+    • {sort}
+           • (nil,false)  no sorting
+           • (true)       perform |table.sort|
+           • (function)   perform |table.sort|, with `sort` as sorting function
+
+    • {iter} (function,nil)
 
   Return:~
     (number)

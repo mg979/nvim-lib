@@ -144,9 +144,10 @@ end
 --- Returns a copy of an array with all duplicate elements removed.
 ---@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
 ---@param t table
+---@param sort function|bool
 ---@param iter function|nil
 ---@return table
-function arr.uniq(t, iter)
+function arr.uniq(t, sort, iter)
   local seen = { }
   local result = { }
   for _, v in (iter or ipairs)(t) do
@@ -154,6 +155,9 @@ function arr.uniq(t, iter)
       table.insert(result, v)
       seen[v] = true
     end
+  end
+  if sort then
+    table.sort(t, type(sort) == "function" and sort or nil)
   end
   return result
 end
