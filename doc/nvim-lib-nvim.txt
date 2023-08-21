@@ -324,6 +324,10 @@ Parameters: ~
         • {close_on} (table)         events that close the popup (optional)
         • {...}      (...)           options for |nvim_open_win()| are given in
                                      the same table.
+        Hooks:
+        • {on_show}  (func)          executed via |nvim_buf_call()|
+        • {on_hide}  (func)          executed when the popup is still visible
+
     • {win} (number)  popup window to reconfigure, if {win} is still valid.
 
   Return: ~
@@ -331,9 +335,19 @@ Parameters: ~
      number =>   window id,
      table  =>   window configuration
 
-  Example: ~
+  Examples: ~
 >lua
       buf, win, cfg = nvim.popup({ text, enter = true, border = "rounded" })
+
+      nvim.popup({ vim.fn.system(diff_cmd), bufopts = { ft = 'diff' } })
+
+      nvim.popup({
+        lines,
+        width = 100,
+        on_show = function()
+          vim.cmd("call matchadd('Constant', '\\t\\S\\+')")
+        end
+      })
 <
 
 ------------------------------------------------------------------------------

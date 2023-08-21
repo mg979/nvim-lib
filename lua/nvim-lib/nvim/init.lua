@@ -199,6 +199,9 @@ function nvim.popup(o, wid)
   else
     win = api.open_win(buf, o.enter, cfg)
   end
+  if o.on_show then
+    api.buf_call(buf, o.on_show)
+  end
   api.win_set_option(win, "cursorline", false)
   api.win_set_option(win, "number", false)
   api.win_set_option(win, "signcolumn", "no")
