@@ -157,7 +157,7 @@ function arr.uniq(t, sort, iter)
     end
   end
   if sort then
-    table.sort(t, type(sort) == "function" and sort or nil)
+    table.sort(result, type(sort) == "function" and sort or nil)
   end
   return result
 end
