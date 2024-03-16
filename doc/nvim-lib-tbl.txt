@@ -73,24 +73,53 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*tbl.merge* ({t1}, {t2}, {keep})
+*tbl.merge* (...)
 
-  Merge two tables, with the second one overwriting the first one, unless
-  {keep} is true, in which case values that are present already in {t1} are
-  not overwritten, then the value from {t2} is discarded.
-  If {keep} is "error", an error is thrown when trying to overwrite an
-  existing key.
+  Merge two or more tables. Two tables are needed as a minimum, the last
+  argument can optionally define the behaviour of the merge. By default, same
+  keys are overwritten during the merge: if the last argument is `true`, the
+  original value is not overwritten. If the last argument is the string
+  `"error"`, an error is thrown when trying to overwrite an existing key.
 
-  Both tables can be `nil`, but the return value is always a table.
-  If not `nil`, table {t1} is changed and returned.
+  NOTE: this mutates the first table! Use |tbl.mergenew| to avoid it.
 
   Parameters: ~
-    • {t1}      (table) receiving table
-    • {t2}      (table) table to merge
-    • {keep}    (boolean|string) don't overwrite values
+    • {...}     (table) tables to merge
+                (boolean|string) merge behaviour
 
   Returns: ~
-    (table) merged table (same as {t1})
+    (table) merged table (the first passed table)
+
+  Example: ~
+>
+      tbl.merge(a, b, c, d, "error")
+<
+------------------------------------------------------------------------------
+
+*tbl.mergenew* (...)
+
+  Same as |tbl.merge|, but it creates a new table, so that the original tables
+  are preserved.
+
+  Example: ~
+>
+      local new_t = tbl.mergenew(a, b, c, d, "error")
+<
+------------------------------------------------------------------------------
+
+*tbl.deepmerge* (...)
+
+  Merge recursively two or more tables, performing a deepcopy of each before
+  merging. Original tables are preserved, a new merged table is created and
+  returned. The final argument can be `true`, `false` or 'error', as for
+  |tbl.merge|.
+
+  Parameters: ~
+    • {...}     (table) tables to merge
+                (boolean|string) merge behaviour
+
+  Returns: ~
+    (table) merged table (new table)
 
 ------------------------------------------------------------------------------
 

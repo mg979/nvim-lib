@@ -155,7 +155,9 @@ MODULE - TBL                                                    *nvim-lib-tbl*
     `map`          t, fn, new, iter     map {t} with {fn}
     `filter`       t, fn, new, iter     filter {t} with {fn}
     `toarray`      t                    create an array from a table
-    `merge`        t1, t2, keep         merge tables
+    `merge`        ...                  merge tables (mutates first table)
+    `mergenew`     ...                  merge tables (to new table)
+    `deepmerge`    ...                  merge tables (recursively)
     `empty`        t                    check if table is empty
     `contains`     t, val               check if table contains value
     `copy`         t, meta, iter        shallow copy, can also copies metatable

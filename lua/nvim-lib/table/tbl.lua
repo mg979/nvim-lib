@@ -1,6 +1,7 @@
 local tbl = {}
 local insert = table.insert
 local util = require("nvim-lib.util")
+local remove = table.remove
 
 -------------------------------------------------------------------------------
 --- Enumerate a table sorted by its keys.
@@ -92,36 +93,6 @@ function tbl.toarray(t)
     insert(dst, v)
   end
   return dst
-end
-
--------------------------------------------------------------------------------
---- Merge two tables, with the second one overwriting the first one, unless
---- "keep" is true, in which case values that are present already in t1 are
---- kept. If "keep" is "error", trying to overwrite a key is an error.
---- Both tables can be nil.
----@param t1 table|nil
----@param t2 table|nil
----@param keep bool|string
----@return table
-function tbl.merge(t1, t2, keep)
-  local err = keep == "error"
-  if t2 then
-    t1 = t1 or {}
-    if keep then
-      for k, v in pairs(t2) do
-        if t1[k] == nil then
-          t1[k] = v
-        elseif err then
-          error("tbl.merge: key exists in table")
-        end
-      end
-    else
-      for k, v in pairs(t2) do
-        t1[k] = v
-      end
-    end
-  end
-  return t1 or {}
 end
 
 -------------------------------------------------------------------------------
@@ -328,6 +299,93 @@ function tbl.subtract(a, b, iter)
     end
   end
   return result
+end
+
+-------------------------------------------------------------------------------
+-- Merge tables
+-------------------------------------------------------------------------------
+
+--- @private
+--- Get tables to merge, and optional merge behaviour from `args`.
+--- @param ... table|bool|string|nil
+--- @return table
+local function get_merge_args(...)
+  local tables, mode = { ... }, false
+  local n = #tables
+  if type(tables[n]) ~= "table" then
+    mode = remove(tables, n)
+    n = n - 1
+  end
+  assert(n > 1, "tbl.merge: at least 2 tables must be provided")
+  return tables, mode
+end
+
+--- @private
+--- Merge two tables, with the second one overwriting the first one, unless
+--- `keep` is true, in which case values that are present already in t1 are
+--- kept. If `keep` is "error", trying to overwrite a key is an error.
+local function merge(t1, t2, keep)
+  local err = keep == 'error'
+  if keep then
+    for k, v in pairs(t2) do
+      if t1[k] == nil then
+        t1[k] = v
+      elseif err then
+        error(string.format('tbl.merge: key %s exists in table', tostring(k)))
+      end
+    end
+  else
+    for k, v in pairs(t2) do
+      t1[k] = v
+    end
+  end
+  return t1
+end
+
+-------------------------------------------------------------------------------
+--- Merge two or more tables. The final argument can be `true`, `false` or
+--- 'error', and is the behaviour that will be used in merge().
+--- The first table is mutated and returned.
+---@param ... table|bool|string
+---@return table
+function tbl.merge(...)
+  local tables, mode = get_merge_args(...)
+  local merged = tables[1]
+  for i = 2, #tables do
+    merge(merged, tables[i], mode)
+  end
+  return merged
+end
+
+-------------------------------------------------------------------------------
+--- Merge two or more tables. The final argument can be `true`, `false` or
+--- 'error', and is the behaviour that will be used in merge().
+--- A new table is created and returned.
+---@param ... table|bool|string
+---@return table
+function tbl.mergenew(...)
+  local tables, mode = get_merge_args(...)
+  local merged = {}
+  for _, t in ipairs(tables) do
+    merge(merged, t, mode)
+  end
+  return merged
+end
+
+-------------------------------------------------------------------------------
+--- Merge recursively two or more tables, performing a deepcopy of each before
+--- merging. Original tables are preserved, a new merged table is created and
+--- returned. The final argument can be `true`, `false` or 'error', as for
+--- |tbl.merge|.
+---@param ... table|bool|string
+---@return table
+function tbl.deepmerge(...)
+  local tables, mode = get_merge_args(...)
+  local merged = {}
+  for _, t in ipairs(tables) do
+    merge(merged, tbl.deepcopy(t), mode)
+  end
+  return merged
 end
 
 return tbl
