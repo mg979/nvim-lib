@@ -70,9 +70,11 @@ end
 ---   }
 ---
 ---@param name string
+---@param clear bool|nil
 ---@return function
-function nvim.augroup(name)
-  local id, ids = api.create_augroup(name, { clear = true }), {}
+function nvim.augroup(name, clear)
+  clear = clear == nil and true or clear
+  local id, ids = api.create_augroup(name, { clear = clear }), {}
   return function(autocmds)
     for _, v in ipairs(autocmds) do
       local events = v[1]

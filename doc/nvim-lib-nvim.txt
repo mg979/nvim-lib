@@ -131,6 +131,7 @@ Parameters: ~
 
   Parameters: ~
     • {name}    (string) Name of the autogroup
+    • {clear}   (bool|nil) replace previous augroup (default `true`)
 
   Return: ~
     (function({table}))   Function accepting a list-like table with
