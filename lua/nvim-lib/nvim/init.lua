@@ -185,6 +185,8 @@ function nvim.popup(o, wid)
     style = o.style or "minimal",
     border = o.border,
     noautocmd = o.noautocmd,
+    title = o.title,
+    title_pos = o.title_pos,
   }
   cfg.row = o.row
     or o.relative == "win" and 0
