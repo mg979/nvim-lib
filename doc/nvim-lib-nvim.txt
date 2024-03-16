@@ -55,7 +55,7 @@ MODULE FUNCTIONS
     • {lines}    (table|string)   buffer text
     • {opts}     (table)          with `{option = value}` pairs
                                   if empty, |bufhidden| is set to "wipe"
-  Return: ~
+  Returns: ~
     (number) buffer number
 
   See also: ~
@@ -108,7 +108,7 @@ Parameters: ~
 
 ------------------------------------------------------------------------------
 
-*nvim.augroup* ({name})
+*nvim.augroup* ({name}, [{clear}])
 
   Create an |augroup|, to be filled with autocommands to be declared in the
   returning function. The autocommands belong to the defined augroup.
@@ -133,7 +133,7 @@ Parameters: ~
     • {name}    (string) Name of the autogroup
     • {clear}   (bool|nil) replace previous augroup (default `true`)
 
-  Return: ~
+  Returns: ~
     (function({table}))   Function accepting a list-like table with
                           autocommands definitions, in turn returning:
                           • the augroup id
@@ -170,7 +170,7 @@ Parameters: ~
     1. the caught pattern
     2. the result of the catch callback for that index
 
-  Return: ~
+  Returns: ~
     (boolean, any) status, result of pcall.
 
   Example: ~
@@ -285,7 +285,7 @@ Parameters: ~
   Parameters: ~
     • {question}  (string)  Question, without question mark.
 
-  Return: ~
+  Returns: ~
     (boolean)
 
 ------------------------------------------------------------------------------
@@ -331,7 +331,7 @@ Parameters: ~
 
     • {win} (number)  popup window to reconfigure, if {win} is still valid.
 
-  Return: ~
+  Returns: ~
      number =>   buffer number,
      number =>   window id,
      table  =>   window configuration
@@ -359,7 +359,7 @@ Parameters: ~
   would be: >
     line2byte(line('$') + 1) - 1
 <
-  Return: ~
+  Returns: ~
     (number)
 
 ------------------------------------------------------------------------------
@@ -368,7 +368,7 @@ Parameters: ~
 
   Return the full path of the script from where the function is called.
 
-  Return: ~
+  Returns: ~
     (string)
 
 ------------------------------------------------------------------------------
@@ -386,7 +386,7 @@ Parameters: ~
 
   The pattern can be a table, that will be concatenated with "\|".
 
-  Return: ~
+  Returns: ~
     (nil) if the pattern isn't found
 
     (number, number, string, string)

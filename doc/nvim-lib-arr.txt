@@ -27,13 +27,13 @@ MODULE FUNCTIONS
   where the array is certain to be a sequence, |ipairs| in this case is much
   preferable.
 
-  Parameters:~
+  Parameters: ~
     • {t} (table)
 
-  Return:~
+  Returns: ~
     (function)
 
-  See also:~
+  See also: ~
       https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -45,13 +45,13 @@ MODULE FUNCTIONS
   Differences:
   • default range starts at 1
   • if {base} > {max}, {stride} defaults at `-1` instead of `1`
->
+ 
     arr.range(3)        => { 1, 2, 3 }
     arr.range(0, 2)     => { 0, 1, 2 }
     arr.range(1, 3)     => { 1, 2, 3 }
     arr.range(3, 1)     => { 3, 2, 1 }
     arr.range(3, 1, 1)  => {}
-<
+ 
 
 ------------------------------------------------------------------------------
 
@@ -62,13 +62,13 @@ MODULE FUNCTIONS
 
   Note: this function can create holes in an array.
 
-  Parameters:~
+  Parameters: ~
     • {fn}   (function,string)
     • {t}    (table)
     • {new}  (bool)
     • {iter} (function)
 
-  Return:~
+  Returns: ~
       (table)
 
 ------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ MODULE FUNCTIONS
     • {t}    (table)
     • {iter} (function)
 
-  Return: ~
+  Returns: ~
     (table)
 
 ------------------------------------------------------------------------------
@@ -95,11 +95,11 @@ MODULE FUNCTIONS
 
   Create a new sequence from an array, by removing holes.
 
-  Parameters:~
+  Parameters: ~
     • {t}    (table)
     • {iter} (function)
 
-  Return:~
+  Returns: ~
     (table)
 
 ------------------------------------------------------------------------------
@@ -109,10 +109,10 @@ MODULE FUNCTIONS
   Test if a table is a sequence (pure array without holes).
   Returns false if there are non-numeric keys.
 
-  Parameters:~
+  Parameters: ~
     • {t} (table)
 
-  Return:~
+  Returns: ~
     (boolean)
 
 ------------------------------------------------------------------------------
@@ -122,25 +122,25 @@ MODULE FUNCTIONS
   Test if a table is a pure array.
   Returns false if there are non-numeric keys.
 
-  Parameters:~
+  Parameters: ~
     • {t} (table)
 
-  Return:~
+  Returns: ~
     (table)
 
 ------------------------------------------------------------------------------
 
-*arr.indexof* ({t}, {v}, {iter})
+*arr.indexof* ({t}, {val}, {iter})
 
   If an array contains a value, return its index.
   Return nil if the array doesn't contain the value.
 
-  Parameters:~
+  Parameters: ~
     • {t}    (table)
-    • {v}    (any)
+    • {val}  (any)
     • {iter} (function)
 
-  Return:~
+  Returns: ~
     (any) the value of the last nested key
 
   See also: ~
@@ -152,7 +152,7 @@ MODULE FUNCTIONS
 
   Returns a copy of an array with all duplicate elements removed.
 
-  Parameters:~
+  Parameters: ~
     • {t}    (table)
     • {sort}
            • (nil,false)  no sorting
@@ -161,10 +161,10 @@ MODULE FUNCTIONS
 
     • {iter} (function,nil)
 
-  Return:~
+  Returns: ~
     (number)
 
-  See also:~
+  See also: ~
     https://github.com/Tieske/Penlight/blob/master/lua/pl/tablex.lua
 
 ------------------------------------------------------------------------------
@@ -179,15 +179,15 @@ MODULE FUNCTIONS
   Values more negative than the length of the array mean the first element.
   If {start} > {finish}, an empty table is returned.
 
-  Parameters:~
+  Parameters: ~
     • {t}      (table)
     • {start}  (number)   Start range of slice
     • {finish} (number)   End range of slice (inclusive)
 
-  Return:~
+  Returns: ~
     (table)
 
-  Example:~
+  Example: ~
 >lua
     local t = {1, 2, 3, 4, 5}
     arr.slice(t, 3) -- { 3, 4, 5 }
@@ -202,11 +202,11 @@ MODULE FUNCTIONS
 
   Reverse an array, in place or to a new array.
 
-  Parameters:~
+  Parameters: ~
     • {t}    (table)
     • {new}  (boolean)
 
-  Return:~
+  Returns: ~
     (table)
 
 ------------------------------------------------------------------------------
@@ -215,17 +215,19 @@ MODULE FUNCTIONS
 
   Adds the values from one array to another array.
 
-  Parameters:~
+  NOTE: This mutates `dst`!
+
+  Parameters: ~
     • {dst}    (table)       Array to be extended
     • {src}    (table)       Array to extend with
     • {at}     (number,nil)  Insertion point in {dst}, or at end
     • {start}  (number,nil)  Start extending at this index of {src}
     • {finish} (number,nil)  Stop extending at this index of {src}
 
-  Return:~
-    (table)
+  Returns: ~
+    (table) `dst` table is returned
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -235,13 +237,13 @@ MODULE FUNCTIONS
   Flattens a hierarchy of arrays into a single array containing all of the
   values.
 
-  Parameters:~
+  Parameters: ~
     • {t} (table)
 
-  Return:~
+  Returns: ~
     (table)
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -250,15 +252,15 @@ MODULE FUNCTIONS
 
   Set containing those elements that are in both arrays {a} and {b}.
 
-  Parameters:~
+  Parameters: ~
     • {a}    (table)
     • {b}    (table)
     • {iter} (function)
 
-  Return:~
+  Returns: ~
     (table)
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -267,12 +269,12 @@ MODULE FUNCTIONS
 
   Set containing those elements that are in array {a} but not in table {b}.
 
-  Parameters:~
+  Parameters: ~
     • {a}    (table)
     • {b}    (table)
     • {iter} (function)
 
-  Return:~
+  Returns: ~
     (boolean)
 
 

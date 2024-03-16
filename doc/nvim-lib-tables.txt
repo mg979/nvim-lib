@@ -66,7 +66,7 @@ MARKS TABLE                                                   *nvim-lib-marks*
 
 nvim.pos[{mark}]
 
-  Example:~
+  Example: ~
 >lua
     local Pos = nvim.pos
 

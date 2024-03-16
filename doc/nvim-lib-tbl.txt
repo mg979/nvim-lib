@@ -11,14 +11,14 @@ MODULE FUNCTIONS
   Iterator that enumerates a table sorted by its keys.
   If {comp} is given, it must be a function to be used by |table.sort|.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
     • {comp} function,nil
 
-  Return:~
+  Returns: ~
     (function)
 
-  See also:~
+  See also: ~
       https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -31,13 +31,13 @@ MODULE FUNCTIONS
   argument. Other useful iterators: |ipairs|, `arr.npairs`.
   Note: this function can create holes in an array.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
     • {fn} function,string
     • {new} boolean,nil
     • {iter} function,nil
 
-  Return:~
+  Returns: ~
       (table)
 
 ------------------------------------------------------------------------------
@@ -50,13 +50,13 @@ MODULE FUNCTIONS
   argument. Other useful iterators: |ipairs|, `arr.npairs`.
   Note: this function can create holes in an array.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
     • {fn} function,string
     • {new} boolean,nil
     • {iter} function,nil
 
-  Return:~
+  Returns: ~
       (table)
 
 ------------------------------------------------------------------------------
@@ -65,10 +65,10 @@ MODULE FUNCTIONS
 
   Create a new array from the values of {t}.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
 
-  Return:~
+  Returns: ~
     (table)
 
 ------------------------------------------------------------------------------
@@ -82,14 +82,15 @@ MODULE FUNCTIONS
   existing key.
 
   Both tables can be `nil`, but the return value is always a table.
+  If not `nil`, table {t1} is changed and returned.
 
   Parameters: ~
     • {t1}      (table) receiving table
     • {t2}      (table) table to merge
-    • {keep}    (boolean) don't overwrite values
+    • {keep}    (boolean|string) don't overwrite values
 
-  Return: ~
-    (table) merged table
+  Returns: ~
+    (table) merged table (same as {t1})
 
 ------------------------------------------------------------------------------
 
@@ -97,10 +98,10 @@ MODULE FUNCTIONS
 
   Test if table {t} is empty.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
 
-  Return:~
+  Returns: ~
     (boolean)
 
 ------------------------------------------------------------------------------
@@ -109,11 +110,11 @@ MODULE FUNCTIONS
 
   Returns `true` if the table {t} contains the specified value.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
     • {value} any
 
-  Return:~
+  Returns: ~
     (boolean)
 
 ------------------------------------------------------------------------------
@@ -122,12 +123,12 @@ MODULE FUNCTIONS
 
   Make a shallow copy of a table. Copies metatable if {meta} is true.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
     • {meta} boolean,nil
     • {iter} function,nil
 
-  Return:~
+  Returns: ~
     (table)
 
 ------------------------------------------------------------------------------
@@ -138,11 +139,11 @@ MODULE FUNCTIONS
   Multiple nested keys can be passed as argument, they must all be found one
   inside the other, until the last is reached, then its value is returned.
 
-  Parameters:~
+  Parameters: ~
     • {t} table: table to traverse
     • {...} strings: names of nested keys to look for in the table
 
-  Return:~
+  Returns: ~
     (any) the value of the last nested key
 
   See also: ~
@@ -154,13 +155,13 @@ MODULE FUNCTIONS
 
   Counts the number of non-nil values in table {t}.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
 
-  Return:~
+  Returns: ~
     (number)
 
-  See also:~
+  See also: ~
     https://github.com/Tieske/Penlight/blob/master/lua/pl/tablex.lua
 
 ------------------------------------------------------------------------------
@@ -171,7 +172,7 @@ MODULE FUNCTIONS
   Default iterator is |pairs|, but another can be passed in the {iter}
   parameter.
 
-  Parameters:~
+  Parameters: ~
     • {value}
     • {replacement}
     • {iter} function,nil
@@ -182,13 +183,13 @@ MODULE FUNCTIONS
 
   Return an array with all keys used in table {t}.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
 
-  Return:~
+  Returns: ~
     (table)
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -197,13 +198,13 @@ MODULE FUNCTIONS
 
   Return an array with all values used in table {t}.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
 
-  Return:~
+  Returns: ~
     (table)
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -212,13 +213,13 @@ MODULE FUNCTIONS
 
   Make a complete copy of a table, including any child tables it contains.
 
-  Parameters:~
+  Parameters: ~
     • {t} table
 
-  Return:~
+  Returns: ~
     (table)
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -228,12 +229,12 @@ MODULE FUNCTIONS
   Compares two tables. If {deep} is false, it doesn't check the content of
   nested tables, it will only check for object identity (shallow comparison).
 
-  Parameters:~
+  Parameters: ~
     • {a} table
     • {b} table
     • {deep} boolean
 
-  Return:~
+  Returns: ~
     (boolean)
 
 ------------------------------------------------------------------------------
@@ -244,15 +245,15 @@ MODULE FUNCTIONS
   Default iterator is |pairs|, but another can be passed in the {iter}
   parameter.
 
-  Parameters:~
+  Parameters: ~
     • {a} table
     • {b} table
     • {iter} function,nil
 
-  Return:~
+  Returns: ~
     (table)
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 ------------------------------------------------------------------------------
@@ -263,15 +264,15 @@ MODULE FUNCTIONS
   Default iterator is |pairs|, but another can be passed in the {iter}
   parameter.
 
-  Parameters:~
+  Parameters: ~
     • {a} table
     • {b} table
     • {iter} function,nil
 
-  Return:~
+  Returns: ~
     (table)
 
-  See also:~
+  See also: ~
     https://github.com/premake/premake-core/blob/master/src/base/table.lua
 
 
