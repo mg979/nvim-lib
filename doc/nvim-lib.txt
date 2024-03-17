@@ -86,21 +86,21 @@ MODULE - NVIM                                                  *nvim-lib-nvim*
 
     function        arguments~
     ---------------------------------------------------------~
-    `put`             lines, o
-    `setlines`        buf, lines, start, finish
-    `scratchbuf`      lines, opts
-    `commands`        cmds
-    `mappings`        maps
     `augroup`         name
+    `bufsize`         buf
+    `commands`        cmds
     `echo`            o, o2
     `echoerr`         text
-    `yesno`           question
+    `mappings`        maps
     `popup`           o
-    `bufsize`         buf
+    `put`             lines, o
+    `scratchbuf`      lines, opts
     `scriptname`
-    `try`             o
     `search`          pat, flags, stopline, timeout, skip
+    `setlines`        buf, lines, start, finish
     `testspeed`       cmd, cnt, title
+    `try`             o
+    `yesno`           question
 
   Function documentation is found at |nvim-lib-nvim.txt|.
 
