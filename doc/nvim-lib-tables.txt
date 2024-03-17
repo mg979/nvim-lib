@@ -52,12 +52,16 @@ nvim.keycodes[{keycode}]
   keycode notation (<key>) or a "stringified" notation:
 >lua
     local k = nvim.keycodes
-    local CR, Tab = k.CR, k.Tab -- also: k['<CR>'], k['<Tab>']
-    local co, mj = k.CtrlO, k.Metaj -- MetaJ and Metaj are different!
+    local CR, Tab = k.CR, k.Tab           -- also: k['<CR>'], k['<Tab>']
+    local co, mj = k.CtrlO, k.Metaj       -- MetaJ and Metaj are different!
     local cp, mK = k['<C-p>'], k['<M-K>'] -- case can matter
 <
   Note: case doesn't matter for keycodes like <CR> or <C-O>, but it matters
   for the <M-?> keycodes, since <M-a> and <M-A> are different keys.
+
+  Note: this isn't a proper replacement for |nvim_replace_termcodes()| in the
+  cases when you need to convert a string or a long keys sequence. It should
+  only be used for single special keys.
 
 
 
