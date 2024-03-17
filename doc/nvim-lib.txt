@@ -212,6 +212,9 @@ MODULE - ARR                                                    *nvim-lib-arr*
     `flatten`         t, iter           nested arrays in a linear array
     `intersect`       a, b, iter        common `values` between a and b
     `subtract`        a, b, iter        only `values` that belong to a and not b
+    `max`             t, min, iter      find the maximum value in an array
+    `insert`          t, val, pos       insert a value in an array at position
+    `remove`          t, val            remove by value from an array
 
   {1} this is the closest to |vim.tbl_filter| behaviour.
 

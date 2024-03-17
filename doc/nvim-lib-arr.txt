@@ -265,17 +265,48 @@ MODULE FUNCTIONS
 
 ------------------------------------------------------------------------------
 
-*arr.subtract* ({a}, {b}, {iter})
+*arr.max* ({t}, {min}, {iter})
 
-  Set containing those elements that are in array {a} but not in table {b}.
+  Find the maximum value in an array.
 
   Parameters: ~
-    • {a}    (table)
-    • {b}    (table)
+    • {t}    (table)
+    • {min}  (any)        the minimum value to consider
     • {iter} (function)
 
   Returns: ~
-    (boolean)
+    (any)   the maximum value, or `min` if no greater value was found
+
+------------------------------------------------------------------------------
+
+*arr.insert* ({t}, {val}, {pos})
+
+  Similar to table.insert, but {pos} always comes after {val}, and it returns
+  the array itself.
+
+  Parameters: ~
+    • {t}    (table)
+    • {val}  (any)          the value to insert
+    • {pos}  (number|nil)   the position
+
+  Returns: ~
+    (table)   the original array
+
+------------------------------------------------------------------------------
+
+*arr.remove* ({t}, {val})
+
+  Remove (by value) an element from an array.
+  Return a tuple with the original array, and index at which the value was
+  found, or `nil` if it wasn't found.
+
+  Parameters: ~
+    • {t}    (table)
+    • {val}  (any)          the value to remove
+
+  Returns: ~
+    (table)         the original array
+    (number|nil)    the index where the removed value was found
 
 
 ==============================================================================

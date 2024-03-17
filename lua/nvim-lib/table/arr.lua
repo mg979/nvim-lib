@@ -297,14 +297,52 @@ function arr.subtract(a, b, iter)
   return result
 end
 
-function arr.max(t, start, iter)
-  local max = start or 0
+-------------------------------------------------------------------------------
+--- Find the maximum value in an array.
+--- @param t table
+--- @param min any: the minimum value to consider
+--- @param iter function
+--- @return any
+function arr.max(t, min, iter)
+  local max = min or t[1]
   for _, v in (iter or ipairs)(t) do
     if v > max then
       max = v
     end
   end
   return max
+end
+
+-------------------------------------------------------------------------------
+--- Similar to table.insert, but `pos` always comes after `val`, and it returns
+--- the table itself.
+--- @param t table
+--- @param val any
+--- @param pos number
+--- @return table
+function arr.insert(t, val, pos)
+  if pos then
+    insert(t, pos, val)
+  else
+    insert(t, val)
+  end
+  return t
+end
+
+-------------------------------------------------------------------------------
+--- Remove (by value) an element from an array.
+--- Return a tuple with the original array, and index at which the value was
+--- found, or `nil` if it wasn't found.
+--- @param t table
+--- @param val any
+--- @return table, number|nil
+function arr.remove(t, val)
+  local i = arr.indexof(t, val)
+  if i then
+    table.remove(t, i)
+    return t, i
+  end
+  return t, nil
 end
 
 return arr
