@@ -10,8 +10,8 @@
 -- correspondence in the api, or that are quite different.
 
 local fn = vim.fn
-local api = require("nvim-lib").api
-local tbl = require("nvim-lib").tbl
+local api = require('nvim-lib').api
+local tbl = require('nvim-lib').tbl
 local nvim = {}
 
 -------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ local nvim = {}
 -- options as for nvim_put, plus a `reindent` option.
 function nvim.put(lines, o)
   o = tbl.merge({
-    type = "l",
+    type = 'l',
     after = true,
     follow = true,
     reindent = false,
@@ -27,7 +27,7 @@ function nvim.put(lines, o)
   api.put(lines, o.type, o.after, o.follow)
   -- FIXME: there are better methods for reindentation
   if o.reindent then
-    vim.cmd("noautocmd normal! `[V`]=")
+    vim.cmd('noautocmd normal! `[V`]=')
   end
 end
 
@@ -41,7 +41,7 @@ end
 ---@param start number
 ---@param finish number
 function nvim.setlines(buf, lines, start, finish)
-  lines = type(lines) == "string" and vim.split(lines, "\n", { trimempty = true }) or lines
+  lines = type(lines) == 'string' and vim.split(lines, '\n', { trimempty = true }) or lines
   finish = (not finish and start) and start or (not finish and not start) and -1 or finish
   start = start and start - 1 or 0
   api.buf_set_lines(buf, start, finish, true, lines)
@@ -55,7 +55,7 @@ end
 function nvim.scratchbuf(lines, opts)
   local bnr = api.create_buf(false, true)
   nvim.setlines(bnr, lines)
-  api.buf_set_option(bnr, "bufhidden", "wipe")
+  api.buf_set_option(bnr, 'bufhidden', 'wipe')
   for k, v in pairs(opts or {}) do
     api.buf_set_option(bnr, k, v)
   end
@@ -87,31 +87,28 @@ end
 ---
 ---@param o table|string
 function nvim.echo(o, o2)
-  assert(
-    type(o) == "string" or type(o) == "table",
-    "argument #1 must be string or table"
-  )
+  assert(type(o) == 'string' or type(o) == 'table', 'argument #1 must be string or table')
   if o2 then
     assert(
-      type(o2) == "string" or type(o2) == "table" or type(o2) == "boolean",
-      "argument #2 must be string or table"
+      type(o2) == 'string' or type(o2) == 'table' or type(o2) == 'boolean',
+      'argument #2 must be string or table'
     )
   end
   o2 = o2 or {}
-  if type(o2) == "string" then
+  if type(o2) == 'string' then
     o2 = { highlight = o2 }
   elseif o2 == true then
     o2 = { history = true }
   elseif o2 == false then
     o2 = { history = false }
   end
-  if type(o) == "string" then -- a single string
+  if type(o) == 'string' then -- a single string
     o = {
       text = o,
       highlight = o2.highlight,
       history = o2.history,
     }
-  elseif o[1] and type(o[1]) == "string" then -- a list of lines
+  elseif o[1] and type(o[1]) == 'string' then -- a list of lines
     o = {
       lines = o,
       highlight = o2.highlight or o.highlight,
@@ -129,11 +126,9 @@ function nvim.echo(o, o2)
   local chunks
 
   if o.text then
-    chunks = {{ o.text, hl }}
-
+    chunks = { { o.text, hl } }
   elseif o.lines then
-    chunks = {{ table.concat(o.lines, "\n"), hl }}
-
+    chunks = { { table.concat(o.lines, '\n'), hl } }
   elseif o.chunks and hl then -- map chunks with a default highlight
     chunks = tbl.map(o.chunks, function(_, v)
       return { v[1], v[2] or hl }
@@ -146,7 +141,7 @@ end
 --- Print some text with error highlight, and add it to message history.
 ---@param text string|table
 function nvim.echoerr(text)
-  nvim.echo(text, { highlight = "Error", history = true })
+  nvim.echo(text, { highlight = 'Error', history = true })
 end
 
 -------------------------------------------------------------------------------
@@ -156,7 +151,7 @@ end
 ---@param answers string|table
 ---@return bool
 function nvim.yesno(question)
-  return fn.confirm(question .. "?", "&Yes\nNo") == 1
+  return fn.confirm(question .. '?', '&Yes\nNo') == 1
 end
 
 -------------------------------------------------------------------------------
@@ -167,33 +162,35 @@ end
 ---@param wid number: previous window to reconfigure
 ---@return number,number,table: buffer, winid, window configuration
 function nvim.popup(o, wid)
-  if type(o) == "string" then
+  if type(o) == 'string' then
     o = { o }
   end
   local lines = o.lines or o[1] or {}
-  lines = type(lines) == "string" and vim.split(lines, "\n", { trimempty = true }) or lines
+  lines = type(lines) == 'string' and vim.split(lines, '\n', { trimempty = true }) or lines
   local buf = o.buf or nvim.scratchbuf(lines, o.bufopts)
   local cfg = {
-    relative = o.relative or "cursor",
-    win = o.relative == "win" and (o.win or api.get_current_win()) or nil,
-    anchor = o.anchor or "NW",
+    relative = o.relative or 'cursor',
+    win = o.relative == 'win' and (o.win or api.get_current_win()) or nil,
+    anchor = o.anchor or 'NW',
     width = o.width or 80,
     height = o.height or #lines,
     focusable = o.enter or (o.focusable ~= nil and o.focusable),
-    bufpos = o.relative == "win" and o.bufpos or nil,
+    bufpos = o.relative == 'win' and o.bufpos or nil,
     zindex = o.zindex,
-    style = o.style or "minimal",
+    style = o.style or 'minimal',
     border = o.border,
     noautocmd = o.noautocmd,
     title = o.title,
     title_pos = o.title_pos,
   }
   cfg.row = o.row
-    or o.relative == "win" and 0
-    or o.relative == "editor" and (vim.o.lines / 2 - cfg.height / 2) or 1
+    or o.relative == 'win' and 0
+    or o.relative == 'editor' and (vim.o.lines / 2 - cfg.height / 2)
+    or 1
   cfg.col = o.col
-    or o.relative == "win" and 0
-    or o.relative == "editor" and (vim.o.columns / 2 - cfg.width / 2) or 1
+    or o.relative == 'win' and 0
+    or o.relative == 'editor' and (vim.o.columns / 2 - cfg.width / 2)
+    or 1
   local win
   if wid and api.win_is_valid(wid) then
     win = wid
@@ -204,9 +201,9 @@ function nvim.popup(o, wid)
   if o.on_show then
     api.buf_call(buf, o.on_show)
   end
-  api.win_set_option(win, "cursorline", false)
-  api.win_set_option(win, "number", false)
-  api.win_set_option(win, "signcolumn", "no")
+  api.win_set_option(win, 'cursorline', false)
+  api.win_set_option(win, 'number', false)
+  api.win_set_option(win, 'signcolumn', 'no')
   for k, v in pairs(o.winopts or {}) do
     api.win_set_option(win, k, v)
   end
@@ -316,31 +313,31 @@ end
 ---@param flags string
 ---@return nil|number,number
 function nvim.search(pat, flags, stopline, timeout, skip)
-  flags = flags or ""
+  flags = flags or ''
   -- magicness
-  local m, nm, vnm = flags:find("m"), flags:find("M"), flags:find("V")
+  local m, nm, vnm = flags:find('m'), flags:find('M'), flags:find('V')
   local vm = not m and not nm and not vnm
   -- case sensitivity
-  local i, I = flags:find("i"), flags:find("I")
+  local i, I = flags:find('i'), flags:find('I')
   -- remove custom flags
-  flags = flags:gsub("[mMViI]", "")
+  flags = flags:gsub('[mMViI]', '')
 
-  if type(pat) == "table" then
-    pat = table.concat(pat, vm and "|" or "\\|")
+  if type(pat) == 'table' then
+    pat = table.concat(pat, vm and '|' or '\\|')
   end
 
   if nm then
-    pat = "\\M" .. pat
+    pat = '\\M' .. pat
   elseif vnm then
-    pat = "\\V" .. pat
+    pat = '\\V' .. pat
   elseif vm then
-    pat = "\\v" .. pat
+    pat = '\\v' .. pat
   end
 
   if i then
-    pat = "\\c" .. pat
+    pat = '\\c' .. pat
   elseif I then
-    pat = "\\C" .. pat
+    pat = '\\C' .. pat
   end
 
   local ret = fn.searchpos(pat, flags, stopline, timeout, skip)
@@ -349,7 +346,7 @@ function nvim.search(pat, flags, stopline, timeout, skip)
     -- if smartcase is enabled and there are no uppercase chars in the pattern,
     -- perform case-insensitive pattern matching
     if not i and not I and not pat:find('[A-Z]') and vim.o.smartcase then
-      pat = "\\c" .. pat
+      pat = '\\c' .. pat
     end
     local str = fn.matchstr(fn.getline(ret[1]), pat, ret[2] - 1)
     return row, col, str, pat
@@ -364,7 +361,7 @@ end
 ---@param title string
 function nvim.testspeed(f, cnt, title)
   local time = fn.reltime()
-  f = type(f) == "function" and f or function()
+  f = type(f) == 'function' and f or function()
     vim.cmd(f)
   end
 
@@ -372,9 +369,11 @@ function nvim.testspeed(f, cnt, title)
     f()
   end
   print(
-    fn.matchstr(fn.reltimestr(fn.reltime(time)), ".*\\..\\{,3}")
-      .. " seconds to run " .. (cnt or 100) .. " iterations of "
-      .. (title or "")
+    fn.matchstr(fn.reltimestr(fn.reltime(time)), '.*\\..\\{,3}')
+      .. ' seconds to run '
+      .. (cnt or 100)
+      .. ' iterations of '
+      .. (title or '')
   )
 end
 

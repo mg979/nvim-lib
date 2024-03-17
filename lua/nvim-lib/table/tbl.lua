@@ -1,6 +1,6 @@
 local tbl = {}
 local insert = table.insert
-local util = require("nvim-lib.util")
+local util = require('nvim-lib.util')
 local remove = table.remove
 
 -------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ end
 ---@return table
 function tbl.map(t, fn, new, iter)
   local dst = new and {} or t
-  if type(fn) == "string" then
+  if type(fn) == 'string' then
     fn = util.kvfunc(fn)
   end
   for k, v in (iter or pairs)(t) do
@@ -62,7 +62,7 @@ end
 ---@return table
 function tbl.filter(t, fn, new, iter)
   local dst
-  if type(fn) == "string" then
+  if type(fn) == 'string' then
     fn = util.kvfunc(fn)
   end
   if new then
@@ -143,8 +143,8 @@ end
 ---@param ... string: name of nested keys to look for in the table
 ---@return any: the nested value
 function tbl.get(t, ...)
-  for _, k in ipairs({...}) do
-    if type(t) == "table" then
+  for _, k in ipairs { ... } do
+    if type(t) == 'table' then
       if not t[k] then
         return nil
       end
@@ -218,7 +218,7 @@ function tbl.deepcopy(t)
   local seen = {}
 
   local function _copy(obj)
-    if type(obj) ~= "table" then
+    if type(obj) ~= 'table' then
       return obj
     elseif seen[obj] then
       return seen[obj]
@@ -248,9 +248,10 @@ function tbl.equal(a, b, deep)
     if not b[k] then
       return false
     elseif b[k] ~= v then
-      if not deep
-        or type(b[k]) ~= "table"
-        or type(v) ~= "table"
+      if
+        not deep
+        or type(b[k]) ~= 'table'
+        or type(v) ~= 'table'
         or not tbl.equal(b[k], v, true)
       then
         return false
@@ -312,11 +313,11 @@ end
 local function get_merge_args(...)
   local tables, mode = { ... }, false
   local n = #tables
-  if type(tables[n]) ~= "table" then
+  if type(tables[n]) ~= 'table' then
     mode = remove(tables, n)
     n = n - 1
   end
-  assert(n > 1, "tbl.merge: at least 2 tables must be provided")
+  assert(n > 1, 'tbl.merge: at least 2 tables must be provided')
   return tables, mode
 end
 

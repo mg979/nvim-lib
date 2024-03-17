@@ -3,9 +3,8 @@
 -- Put in a separate module so that startup isn't slowed down too much.
 --------------------------------------------------------------------------------
 
-local fn = vim.fn
-local api = require("nvim-lib").api
-local tbl = require("nvim-lib").tbl
+local api = require('nvim-lib').api
+local tbl = require('nvim-lib').tbl
 local nvim = {}
 
 -------------------------------------------------------------------------------
@@ -44,7 +43,7 @@ end
 ---@param maps table
 function nvim.mappings(maps)
   for lhs, map in pairs(maps) do
-    if type(map) ~= "table" then
+    if type(map) ~= 'table' then
       map = { rhs = map }
     end
     map.opts = map.opts or tbl.copy(map)
@@ -103,10 +102,6 @@ end
 function nvim.scriptname()
   return debug.getinfo(2).source:match('@?(.*)')
 end
-
-
-
-
 
 --------------------------------------------------------------------------------
 -- End of module

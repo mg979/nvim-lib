@@ -9,32 +9,32 @@
 
 local api = vim.api
 local fn = vim.fn
-local log = require("nvim-lib.util").log
+local log = require('nvim-lib.util').log
 
 local _marks = {
-  cursor = ".",
-  lastLine = "$",
-  winTopLine = "w0",
-  winBottomLine = "w$",
-  visualMode = "v",
-  visualBegin = "`<",
-  visualEnd = "`>",
-  yankBegin = "`[",
-  yankEnd = "`]",
-  lastJump = "``",
-  lastPos = "`\"",
-  lastInsert = "`^",
-  lastChange = "`.",
-  sentenceBegin = "`(",
-  sentenceEnd = "`)",
-  paragraphBegin = "`{",
-  paragraphEnd = "`}",
+  cursor = '.',
+  lastLine = '$',
+  winTopLine = 'w0',
+  winBottomLine = 'w$',
+  visualMode = 'v',
+  visualBegin = '`<',
+  visualEnd = '`>',
+  yankBegin = '`[',
+  yankEnd = '`]',
+  lastJump = '``',
+  lastPos = '`"',
+  lastInsert = '`^',
+  lastChange = '`.',
+  sentenceBegin = '`(',
+  sentenceEnd = '`)',
+  paragraphBegin = '`{',
+  paragraphEnd = '`}',
   visualBeginLine = "'<",
   visualEndLine = "'>",
   yankBeginLine = "'[",
   yankEndLine = "']",
   lastJumpLine = "'`",
-  lastPosLine = "'\"",
+  lastPosLine = '\'"',
   lastInsertLine = "'^",
   lastChangeLine = "'.",
   sentenceBeginLine = "'(",
@@ -59,7 +59,7 @@ local function upper(mark)
     log(pos) -- error
     return nil
   end
-  if pos[1] == 0 and pos[2] == 0 and pos[3] == 0 and pos[4] == "" then
+  if pos[1] == 0 and pos[2] == 0 and pos[3] == 0 and pos[4] == '' then
     return nil -- invalid mark
   end
   return {
@@ -81,16 +81,16 @@ local function bufmark(mark, buf)
   return { buf = buf, line = pos[1], col = pos[2], offset = 0 }
 end
 
-return setmetatable({ upper = upper, bufmark = bufmark, }, {
+return setmetatable({ upper = upper, bufmark = bufmark }, {
   __metatable = false,
   __index = function(_, mark)
     return getpos(_marks[mark] or mark)
   end,
   __newindex = function(_, mark, pos)
     mark = _marks[mark] or mark
-    if mark == "." then
+    if mark == '.' then
       if pos[1] then
-        pos = getpos(".")
+        pos = getpos('.')
         fn.cursor(pos.line, pos.col)
       else
         fn.cursor(pos.line, pos.col)
@@ -101,7 +101,7 @@ return setmetatable({ upper = upper, bufmark = bufmark, }, {
       fn.setpos(mark, pos)
     else
       if not pos.buf or not pos.line or not pos.col or not pos.offset then
-        error("This is not a position!")
+        error('This is not a position!')
       end
       fn.setpos(mark, { pos.buf, pos.line, pos.col, pos.offset })
     end
@@ -118,5 +118,5 @@ return setmetatable({ upper = upper, bufmark = bufmark, }, {
       col = pos[2],
       offset = 0,
     }
-  end
+  end,
 })

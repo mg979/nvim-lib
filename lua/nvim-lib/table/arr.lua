@@ -8,7 +8,7 @@
 local arr = {}
 local insert = table.insert
 local maxn = table.maxn
-local util = require("nvim-lib.util")
+local util = require('nvim-lib.util')
 
 -------------------------------------------------------------------------------
 --- Iterator for all elements of an array, not only those returned by ipairs
@@ -56,7 +56,7 @@ end
 ---@return table
 function arr.map(t, fn, new, iter)
   local dst = new and {} or t
-  if type(fn) == "string" then
+  if type(fn) == 'string' then
     fn = util.kvfunc(fn)
   end
   for k, v in (iter or ipairs)(t) do
@@ -74,7 +74,7 @@ end
 ---@return table
 function arr.filter(t, fn, iter)
   local dst = {}
-  if type(fn) == "string" then
+  if type(fn) == 'string' then
     fn = util.kvfunc(fn)
   end
   for k, v in (iter or ipairs)(t) do
@@ -106,8 +106,10 @@ end
 function arr.isseq(t)
   local i = 0
   for _ in pairs(t) do
-      i = i + 1
-      if t[i] == nil then return false end
+    i = i + 1
+    if t[i] == nil then
+      return false
+    end
   end
   return true
 end
@@ -118,7 +120,7 @@ end
 ---@return bool
 function arr.isarr(t)
   for k in pairs(t) do
-    if type(k) ~= "number" then
+    if type(k) ~= 'number' then
       return false
     end
   end
@@ -129,12 +131,12 @@ end
 --- If an array contains a value, return its index.
 --- Return nil if the array doesn't contain the value.
 ---@param t table
----@param v any
+---@param val any
 ---@param iter function|nil
 ---@return number|nil
-function arr.indexof(t, v, iter)
-  for k, _v in (iter or ipairs)(t) do
-    if _v == v then
+function arr.indexof(t, val, iter)
+  for k, v in (iter or ipairs)(t) do
+    if v == val then
       return k
     end
   end
@@ -148,8 +150,8 @@ end
 ---@param iter function|nil
 ---@return table
 function arr.uniq(t, sort, iter)
-  local seen = { }
-  local result = { }
+  local seen = {}
+  local result = {}
   for _, v in (iter or ipairs)(t) do
     if not seen[v] then
       table.insert(result, v)
@@ -157,7 +159,7 @@ function arr.uniq(t, sort, iter)
     end
   end
   if sort then
-    table.sort(result, type(sort) == "function" and sort or nil)
+    table.sort(result, type(sort) == 'function' and sort or nil)
   end
   return result
 end
@@ -252,7 +254,7 @@ function arr.flatten(t, iter)
 
   local function _flatten(t_)
     for _, v in (iter or ipairs)(t_) do
-      if type(v) == "table" then
+      if type(v) == 'table' then
         _flatten(v)
       elseif v then
         insert(result, v)

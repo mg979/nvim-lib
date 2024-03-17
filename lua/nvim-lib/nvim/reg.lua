@@ -14,26 +14,24 @@ local getreg, setreg = fn.getreg, fn.setreg
 local _regs = {
   unnamed = function() return getreg('"') end,
   delete = function() return getreg('-') end,
-  colon =  function() return getreg(':') end,
-  dot =  function() return getreg('.') end,
-  star =  function() return getreg('*') end,
-  plus =  function() return getreg('+') end,
-  file =  function() return getreg('%') end,
-  alt =  function() return getreg('#') end,
-  eval =  function() return getreg('=') end,
-  expr =  function() return getreg('=', 1) end,
+  colon = function() return getreg(':') end,
+  dot = function() return getreg('.') end,
+  star = function() return getreg('*') end,
+  plus = function() return getreg('+') end,
+  file = function() return getreg('%') end,
+  alt = function() return getreg('#') end,
+  eval = function() return getreg('=') end,
+  expr = function() return getreg('=', 1) end,
 }
 
 return setmetatable({}, {
   __metatable = false,
-  __index = function(_, k)
-    return _regs[k] and _regs[k]() or getreg(k, 1)
-  end,
+  __index = function(_, k) return _regs[k] and _regs[k]() or getreg(k, 1) end,
   __newindex = function(_, k, v)
-    if type(v) == "table" or v:find("\n$") then
-      setreg(k, v, "l")
+    if type(v) == 'table' or v:find('\n$') then
+      setreg(k, v, 'l')
     else
-      setreg(k, v, "c")
+      setreg(k, v, 'c')
     end
   end,
   __call = function(_, k, content, t)
