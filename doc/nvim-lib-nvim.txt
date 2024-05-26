@@ -410,8 +410,28 @@ Parameters: ~
     • {cnt}     (number)            number of iterations, default 100
     • {title}   (string)            title for test, shown in result
 
+------------------------------------------------------------------------------
 
+*nvim.cowsays* ({opts})
 
+  Generate a quote for dashboards.
+
+  Parameters: ~
+    • {opts} (table) with options:                            (default)
+     • cow (bool): include a cow                                true
+     • boxed (bool): surround the quote with a box              true
+     • as_string (bool): `false` returns a table                  true
+     • is_tip (bool): use a vim tip                             false
+     • startify (bool): only use quotes from vim-startify       false
+     • pad_top (number): padding before the quote               1
+     • pad_bottom (number): padding after the quote             0
+
+  Returns: ~
+    (table, string)
+
+  Credits: ~
+    vim-startify (https://github.com/mhinz/vim-startify)
+    fortune.nvim (https://github.com/rubiin/fortune.nvim)
 
 ==============================================================================
 vim:tw=78:ts=2:sw=2:ft=help:norl:et:fen:fdl=0:

@@ -103,6 +103,21 @@ function nvim.scriptname()
   return debug.getinfo(2).source:match('@?(.*)')
 end
 
+-------------------------------------------------------------------------------
+--- Return a quote for dashboards.
+--- @param opts table: with options:                          (default)
+---  • cow (bool): include a cow                                true
+---  • boxed (bool): surround the quote with a box              true
+---  • as_string (bool): `false` returns a table                true
+---  • is_tip (bool): use a vim tip                             false
+---  • startify (bool): only use quotes from vim-startify       false
+---  • pad_top (number): padding before the quote               1
+---  • pad_bottom (number): padding after the quote             0
+--- @return table|string
+function nvim.cowsays(opts)
+  return require('nvim-lib.fortune')(opts)
+end
+
 --------------------------------------------------------------------------------
 -- End of module
 --------------------------------------------------------------------------------
