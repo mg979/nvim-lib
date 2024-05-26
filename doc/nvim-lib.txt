@@ -10,8 +10,7 @@ NVIM-LIB - TABLE OF CONTENTS                                        *nvim-lib*
     Keycodes table...................................|nvim-lib-keycodes|
   Module: tbl........................................|nvim-lib-tbl|
   Module: arr........................................|nvim-lib-tbl|
-    Table functions as strings.......................|nvim-lib-fn-as-string|
-    Notes about |vim-tbl_|*............................|nvim-lib-vimtbl|
+    Notes about |vim-tbl_*|............................|nvim-lib-vimtbl|
 
 
 
@@ -223,55 +222,7 @@ MODULE - ARR                                                    *nvim-lib-arr*
 
 
 
-TABLE FUNCTIONS AS STRING                              *nvim-lib-fn-as-string*
-------------------------------------------------------------------------------
-
-  Vimscript has a special way to write map/filter functions: with strings as
-  an alternative to functions. Most functions that map/filter tables accept
-  a similar syntax, but instead of |v:key| and |v:val|, here `_K` and `_V`
-  must be used. Example:
->lua
-    -- this increases all values in the array by 1
-    local t = tbl.map({ 1, 2, 3 }, "_V + 1")
-<
-  Note: there are differences with the vimscript implementation:
-
-  - in vimL, these expression can retrieve anything that is valid in the
-    current scope: local and global variables, script variables from outer
-    scopes, etc.
-
-  - this implementation uses |debug.getlocal()| and |debug.getupvalue()| to
-    get names valid in the local scope, and in outer scopes respectively.
-    With local names there shouldn't be problems, while with upvalues there
-    could be, because not everything that is defined in outer scopes is
-    returned by |debug.getupvalue()| (at least in LuaJIT, can't say for Lua),
-    but only the names that have been accessed up to that moment (in the
-    current scope?). Global names should be visible anyway. This rules out:
-
-    • outer local functions that have never been called
-    • outer variables (including tables) that have never been accessed
-
-    Therefore you may need to keep both the calling function and the called
-    function (inside the evaluated string) in the same table, so that you can
-    be sure that the called function will be visible.
-
-  - also, you shouldn't return directly a function that uses this syntax,
-    because if it is in the return value, the stack will be different from the
-    one that you would have if the mapping function was called inside the
-    function scope (and that is the position in the stack that will be
-    used). At least this is my interpretation. Example:
->lua
-      -- NO
-      return tbl.map(t, "_V + 1")
-      -- YES
-      t = tbl.map(t, "_V + 1")
-      return t
-<
-
-
-
-
-NOTES ABOUT VIM.TBL_ FUNCTIONS                               *nvim-lib-vimtbl*
+NOTES ABOUT VIM.TBL_* FUNCTIONS                              *nvim-lib-vimtbl*
 ------------------------------------------------------------------------------
 
   Can be found at (|gf| over path): `$VIMRUNTIME/lua/vim/shared.lua`

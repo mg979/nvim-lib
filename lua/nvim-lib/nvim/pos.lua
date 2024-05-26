@@ -9,7 +9,6 @@
 
 local api = vim.api
 local fn = vim.fn
-local log = require('nvim-lib.util').log
 
 local _marks = {
   cursor = '.',
@@ -56,7 +55,7 @@ end
 local function upper(mark)
   local ok, pos = pcall(api.nvim_get_mark, _marks[mark] or mark, {})
   if not ok then
-    log(pos) -- error
+    require('nvim-lib.util').log(pos) -- error
     return nil
   end
   if pos[1] == 0 and pos[2] == 0 and pos[3] == 0 and pos[4] == '' then
@@ -73,7 +72,7 @@ end
 local function bufmark(mark, buf)
   local ok, pos = pcall(api.nvim_buf_get_mark, buf, _marks[mark] or mark)
   if not ok then
-    log(pos) -- error
+    require('nvim-lib.util').log(pos) -- error
     return nil
   elseif pos[1] == 0 and pos[2] == 0 then -- invalid mark
     return nil
@@ -109,7 +108,7 @@ return setmetatable({ upper = upper, bufmark = bufmark }, {
   __call = function(_, win)
     local ok, pos = pcall(api.nvim_win_get_cursor, win or 0)
     if not ok then
-      log(pos)
+      require('nvim-lib.util').log(pos)
       return
     end
     return {

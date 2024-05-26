@@ -8,7 +8,6 @@
 local arr = {}
 local insert = table.insert
 local maxn = table.maxn
-local util = require('nvim-lib.util')
 
 -------------------------------------------------------------------------------
 --- Iterator for all elements of an array, not only those returned by ipairs
@@ -56,9 +55,6 @@ end
 ---@return table
 function arr.map(t, fn, new, iter)
   local dst = new and {} or t
-  if type(fn) == 'string' then
-    fn = util.kvfunc(fn)
-  end
   for k, v in (iter or ipairs)(t) do
     dst[k] = fn(k, v)
   end
@@ -74,9 +70,6 @@ end
 ---@return table
 function arr.filter(t, fn, iter)
   local dst = {}
-  if type(fn) == 'string' then
-    fn = util.kvfunc(fn)
-  end
   for k, v in (iter or ipairs)(t) do
     if fn(k, v) then
       insert(dst, v)

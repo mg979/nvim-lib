@@ -1,6 +1,5 @@
 local tbl = {}
 local insert = table.insert
-local util = require('nvim-lib.util')
 local remove = table.remove
 
 -------------------------------------------------------------------------------
@@ -40,9 +39,6 @@ end
 ---@return table
 function tbl.map(t, fn, new, iter)
   local dst = new and {} or t
-  if type(fn) == 'string' then
-    fn = util.kvfunc(fn)
-  end
   for k, v in (iter or pairs)(t) do
     dst[k] = fn(k, v)
   end
@@ -62,9 +58,6 @@ end
 ---@return table
 function tbl.filter(t, fn, new, iter)
   local dst
-  if type(fn) == 'string' then
-    fn = util.kvfunc(fn)
-  end
   if new then
     dst = {}
     for k, v in (iter or pairs)(t) do
