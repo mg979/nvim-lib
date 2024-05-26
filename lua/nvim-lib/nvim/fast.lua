@@ -4,7 +4,6 @@
 --------------------------------------------------------------------------------
 
 local api = require('nvim-lib').api
-local tbl = require('nvim-lib').tbl
 local nvim = {}
 
 -------------------------------------------------------------------------------
@@ -46,7 +45,7 @@ function nvim.mappings(maps)
     if type(map) ~= 'table' then
       map = { rhs = map }
     end
-    map.opts = map.opts or tbl.copy(map)
+    map.opts = map.opts or require('nvim-lib').tbl.copy(map)
     map.opts[1], map.opts.rhs, map.opts.mode = nil, nil, nil
     vim.keymap.set(map.mode or 'n', lhs, map.rhs or map[1], map.opts)
   end
