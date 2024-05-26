@@ -42,11 +42,10 @@ local function quote(boxed, tip, startify)
   math.randomseed(os.time())
   local pool
   if tip then
-    pool = require('nvim-lib.fortune.tips')
-  elseif startify or math.random(2) == 1 then
-    pool = require('nvim-lib.fortune.startify')
+    pool = require('nvim-lib.fortune.tips' .. math.random(2))
   else
-    pool = require('nvim-lib.fortune.quotes')
+    local n = startify and 4 or 8
+    pool = require('nvim-lib.fortune.quotes' .. math.random(n))
   end
   local wrapped = {}
   for _, v in ipairs(pool[math.random(#pool)]) do
