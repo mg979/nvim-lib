@@ -44,20 +44,30 @@ local nvim = setmetatable({}, {
 --  ╭─────────────────╮
 --  │ Table functions │
 --  ╰─────────────────╯
-local tbl = setmetatable({}, {
+local tbl, arr = {}, {}
+
+setmetatable(tbl, {
   __index = function(t, k)
     local v = require("nvim-lib.table.tbl")[k]
     t[k] = v
     return v
-  end
+  end,
+  __call = function(_, v)
+    assert(type(v) == "table", "Table required")
+    return setmetatable(v, { __index = tbl })
+  end,
 })
 
-local arr = setmetatable({}, {
+setmetatable(arr, {
   __index = function(t, k)
     local v = require("nvim-lib.table.arr")[k]
     t[k] = v
     return v
-  end
+  end,
+  __call = function(_, v)
+    assert(type(v) == "table", "Table required")
+    return setmetatable(v, { __index = arr })
+  end,
 })
 
 -------------------------------------------------------------------------------

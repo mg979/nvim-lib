@@ -9,6 +9,12 @@ local arr = {}
 local insert = table.insert
 local maxn = table.maxn
 
+-- module metatable
+local _mt = { __index = arr }
+
+---@return table: empty table that inherits the metatable of `src`
+local smt = function(src) return setmetatable({}, getmetatable(src)) end
+
 -------------------------------------------------------------------------------
 --- Iterator for all elements of an array, not only those returned by ipairs
 --- (because it stops at the first nil value).
@@ -35,7 +41,7 @@ end
 ---@param step number
 ---@return table
 function arr.range(start, finish, step)
-  local rng = {}
+  local rng = setmetatable({}, _mt)
   start, finish = finish and start or 1, finish or start or 1
   step = step or (start <= finish and 1 or -1)
   for i = start, finish, step do
@@ -54,7 +60,7 @@ end
 ---@param iter function|nil
 ---@return table
 function arr.map(t, fn, new, iter)
-  local dst = new and {} or t
+  local dst = new and smt(t) or t
   for k, v in (iter or ipairs)(t) do
     dst[k] = fn(k, v)
   end
@@ -69,7 +75,7 @@ end
 ---@param iter function|nil
 ---@return table
 function arr.filter(t, fn, iter)
-  local dst = {}
+  local dst = smt(t)
   for k, v in (iter or ipairs)(t) do
     if fn(k, v) then
       insert(dst, v)
@@ -84,7 +90,7 @@ end
 ---@param iter function|nil
 ---@return table
 function arr.seq(t, iter)
-  local dst = {}
+  local dst = smt(t)
   for _, v in (iter or ipairs)(t) do
     insert(dst, v)
   end
@@ -144,17 +150,17 @@ end
 ---@return table
 function arr.uniq(t, sort, iter)
   local seen = {}
-  local result = {}
+  local dst = smt(t)
   for _, v in (iter or ipairs)(t) do
     if not seen[v] then
-      table.insert(result, v)
+      table.insert(dst, v)
       seen[v] = true
     end
   end
   if sort then
-    table.sort(result, type(sort) == 'function' and sort or nil)
+    table.sort(dst, type(sort) == 'function' and sort or nil)
   end
-  return result
+  return dst
 end
 
 -------------------------------------------------------------------------------
@@ -164,7 +170,7 @@ end
 ---@param finish number: End range of slice (inclusive)
 ---@return table: Copy of table sliced from start to finish
 function arr.slice(t, start, finish)
-  local dst, n, len = {}, 1, false
+  local dst, n, len = smt(t), 1, false
   start = start or 1
   if start == 0 or finish == 0 then
     return {}
@@ -202,7 +208,7 @@ end
 ---@param new bool
 ---@return table
 function arr.reverse(t, new)
-  local dst = new and {} or t
+  local dst = new and smt(t) or t
   local n = maxn(t)
   local i = 1
   while i < n do
@@ -243,20 +249,20 @@ end
 ---@param iter function|nil
 ---@return table
 function arr.flatten(t, iter)
-  local result = {}
+  local dst = smt(t)
 
   local function _flatten(t_)
     for _, v in (iter or ipairs)(t_) do
       if type(v) == 'table' then
         _flatten(v)
       elseif v then
-        insert(result, v)
+        insert(dst, v)
       end
     end
   end
 
   _flatten(t)
-  return result
+  return dst
 end
 
 -------------------------------------------------------------------------------
@@ -267,29 +273,29 @@ end
 ---@param iter function|nil
 ---@return table
 function arr.intersect(a, b, iter)
-  local result = {}
+  local dst = smt(a)
   for _, v in (iter or ipairs)(b) do
     if arr.indexof(a, v, iter) then
-      insert(result, v)
+      insert(dst, v)
     end
   end
-  return result
+  return dst
 end
 
 -------------------------------------------------------------------------------
---- Set containing those elements that are in array A but not in table B.
+--- Set containing those elements that are in array A but not in B.
 ---@param a table
 ---@param b table
 ---@param iter function|nil
 ---@return table
 function arr.subtract(a, b, iter)
-  local result = {}
+  local dst = smt(a)
   for _, v in (iter or ipairs)(a) do
     if not arr.indexof(b, v, iter) then
-      insert(result, v)
+      insert(dst, v)
     end
   end
-  return result
+  return dst
 end
 
 -------------------------------------------------------------------------------
@@ -340,4 +346,13 @@ function arr.remove(t, val)
   return t, nil
 end
 
-return arr
+--------------------------------------------------------------------------------
+-- End of module
+--------------------------------------------------------------------------------
+
+return setmetatable(arr, {
+  __call = function(_, v)
+    assert(type(v) == "table", "Table required")
+    return setmetatable(v, _mt)
+  end
+})

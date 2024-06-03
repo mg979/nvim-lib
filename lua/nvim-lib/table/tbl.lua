@@ -2,6 +2,13 @@ local tbl = {}
 local insert = table.insert
 local remove = table.remove
 
+-- module metatable
+local _mt = { __index = tbl }
+
+---@return table: empty table that inherits the metatable of `src`
+local smt = function(src) return setmetatable({}, getmetatable(src)) end
+
+
 -------------------------------------------------------------------------------
 --- Enumerate a table sorted by its keys.
 ---@see https://github.com/premake/premake-core/blob/master/src/base/table.lua
@@ -38,7 +45,7 @@ end
 ---@param iter function|nil
 ---@return table
 function tbl.map(t, fn, new, iter)
-  local dst = new and {} or t
+  local dst = new and smt(t) or t
   for k, v in (iter or pairs)(t) do
     dst[k] = fn(k, v)
   end
@@ -59,7 +66,7 @@ end
 function tbl.filter(t, fn, new, iter)
   local dst
   if new then
-    dst = {}
+    dst = smt(t)
     for k, v in (iter or pairs)(t) do
       if fn(k, v) then
         dst[k] = v
@@ -81,7 +88,7 @@ end
 ---@param t table
 ---@return table
 function tbl.toarray(t)
-  local dst = {}
+  local dst = smt(t)
   for _, v in pairs(t) do
     insert(dst, v)
   end
@@ -117,7 +124,7 @@ end
 ---@param iter function|nil
 ---@return table
 function tbl.copy(t, meta, iter)
-  local dst = {}
+  local dst = smt(t)
   for k, v in (iter or pairs)(t) do
     dst[k] = v
   end
@@ -181,7 +188,7 @@ end
 ---@param t table
 ---@return table
 function tbl.keys(t)
-  local keys = {}
+  local keys = smt(t)
   for k in pairs(t) do
     insert(keys, k)
   end
@@ -194,7 +201,7 @@ end
 ---@param t table
 ---@return table
 function tbl.values(t)
-  local values = {}
+  local values = smt(t)
   for _, v in pairs(t) do
     insert(values, v)
   end
@@ -223,8 +230,7 @@ function tbl.deepcopy(t)
       clone[key] = _copy(value)
     end
 
-    setmetatable(clone, getmetatable(obj))
-    return clone
+    return setmetatable(clone, getmetatable(obj))
   end
 
   return _copy(t)
@@ -269,13 +275,13 @@ end
 ---@param iter function|nil
 ---@return table
 function tbl.intersect(a, b, iter)
-  local result = {}
+  local dst = smt(a)
   for k, v in (iter or pairs)(b) do
     if a[k] then
-      result[k] = v
+      dst[k] = v
     end
   end
-  return result
+  return dst
 end
 
 -------------------------------------------------------------------------------
@@ -286,13 +292,13 @@ end
 ---@param iter function|nil
 ---@return table
 function tbl.subtract(a, b, iter)
-  local result = {}
+  local dst = smt(a)
   for k, v in (iter or pairs)(a) do
     if not b[k] then
-      result[k] = v
+      dst[k] = v
     end
   end
-  return result
+  return dst
 end
 
 -------------------------------------------------------------------------------
@@ -359,7 +365,7 @@ end
 ---@return table
 function tbl.mergenew(...)
   local tables, mode = get_merge_args(...)
-  local merged = {}
+  local merged = smt(tables[1])
   for _, t in ipairs(tables) do
     merge(merged, t, mode)
   end
@@ -375,11 +381,20 @@ end
 ---@return table
 function tbl.deepmerge(...)
   local tables, mode = get_merge_args(...)
-  local merged = {}
+  local merged = smt(tables[1])
   for _, t in ipairs(tables) do
     merge(merged, tbl.deepcopy(t), mode)
   end
   return merged
 end
 
-return tbl
+--------------------------------------------------------------------------------
+-- End of module
+--------------------------------------------------------------------------------
+
+return setmetatable(tbl, {
+  __call = function(_, v)
+    assert(type(v) == "table", "Table required")
+    return setmetatable(v, { __index = tbl })
+  end
+})
