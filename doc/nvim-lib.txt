@@ -3,19 +3,14 @@
 NVIM-LIB - TABLE OF CONTENTS                                        *nvim-lib*
 ==============================================================================
 
-  Introduction.......................................|nvim-lib-introduction|
-  Module: api........................................|nvim-lib-api|
-  Module: nvim.......................................|nvim-lib-nvim|
-    Registers table..................................|nvim-lib-registers|
-    Keycodes table...................................|nvim-lib-keycodes|
-  Module: tbl........................................|nvim-lib-tbl|
-  Module: arr........................................|nvim-lib-tbl|
-    Notes about |vim-tbl_*|............................|nvim-lib-vimtbl|
+  Usage                                              |nvim-lib-usage|
+  Module: api                                        |nvim-lib-api|
+  Module: nvim                                       |nvim-lib-nvim|
+  Working with tables                                |nvim-lib-tables|
+  Module: tbl                                        |nvim-lib-tbl|
+  Module: arr                                        |nvim-lib-arr|
 
 
-
-INTRODUCTION                                           *nvim-lib-introduction*
-==============================================================================
 
   Neovim API is more powerful than Vim API. But this comes at the price of:
 
@@ -65,7 +60,7 @@ USAGE                                                         *nvim-lib-usage*
 MODULE - API                                                    *nvim-lib-api*
 ==============================================================================
 
-  With this module you can call functions like this:
+  With this module you can call API functions like this:
 >lua
     api.win_close(...) -- instead of vim.api.nvim_win_close(...)
 <
@@ -83,7 +78,7 @@ MODULE - NVIM                                                  *nvim-lib-nvim*
                                                            |nvim-lib-nvim.txt|
   Extra arguments for these functions are generally optional.
 
-    function        arguments~
+    function        arguments ~
     ---------------------------------------------------------~
     `augroup`         name
     `bufsize`         buf
@@ -104,8 +99,63 @@ MODULE - NVIM                                                  *nvim-lib-nvim*
   Function documentation is found at |nvim-lib-nvim.txt|.
 
   This module also includes some tables for better accessibility of several
-  functionalities. |nvim-lib-tables|
+  functionalities (registers, marks, keycodes). |nvim-lib-extras|
 
+
+
+WORKING WITH TABLES                                          |nvim-lib-tables|
+==============================================================================
+
+  Neovim 0.10 has a |vim.iter| module, that has more functionalities, but is
+  2x slower in my tests.
+
+  In Lua, handling tables is slightly complicated by the fact that a table can
+  be at the same time associative (keys are string) and array-like (with
+  numerical indices), so they can behave like both.
+
+  Note: when describing the modules, I'll talk about:
+
+  • `table`     can be anything
+  • `array`     part of a table with numerical indices, can contain holes
+  • `sequence`  part of a table that can be iterated with |ipairs|
+
+  There are two submodules that handle tables:
+
+    • `tbl`     handles all kinds of tables               |nvim-lib-tbl.txt|
+    • `arr`     specializes in arrays and sequences       |nvim-lib-arr.txt|
+
+  |require| with:
+>lua
+    local tbl = require("nvim-lib").tbl
+    local arr = require("nvim-lib").arr
+<
+  Differently from |vim.tbl_|* functions, they can change the table in-place,
+  and {fn} is called with `(key, value)`, not only with `(value)`.
+  Also, they never do table validation. You're responsible for that.
+
+  Some functions have an `iter` parameter, meaning they accept an iterator
+  function, default is |pairs|.
+
+  Metatables ~
+
+  When a function returns a table, and one or more tables were passed as
+  arguments, and the returning table is newly created, it inherits the
+  metatable of the first table passed as argument.
+
+  This allows, among other things, to use the provided functions as `methods`,
+  if you `call` the modules with a table:
+  >lua
+    local arr = require("nvim-lib").arr
+
+    -- `array` will then be able to use `arr` functions as methods
+    local array = arr({1, 2, 3, 4, 5})
+
+    vim.print(array
+      :map(function(k, v) return v + 1 end)     -- { 2, 3, 4, 5, 6 }
+      :slice(2, 4)                              -- { 3, 4, 5 }
+      :map(function(k, v) return v .. '*' end)  -- { '3*', '4*', '5*' }
+    )
+<
 
 
 MODULE - TBL                                                    *nvim-lib-tbl*
@@ -114,41 +164,8 @@ MODULE - TBL                                                    *nvim-lib-tbl*
   |require| with:
 >lua
     local tbl = require("nvim-lib").tbl
-    local arr = require("nvim-lib").arr
 <
-  In Lua, handling tables is slightly complicated by the fact that a table can
-  be at the same time associative (keys are string) and array-like (with
-  numerical indices), so they can behave like both.
-
-  Note: when describing the module, I'll only talk about:
-
-  • `table`     can be anything
-  • `array`     part of a table with numerical indices, can contain holes
-  • `sequence`  part of a table that can be iterated with |ipairs|
-
-  Of special note, there are two new (non-global) iterators available:
-
-    • |npairs| is similar to |ipairs|, but doesn't stop at `nil` keys, so it
-             can be used to loop over arrays that are not sequences
-    • |spairs| generates a sorted order of iteration, accepts a `compare`
-             function.
-
-  There are two submodules that handle tables:
-
-    • `tbl`     handles all kinds of tables               |nvim-lib-tbl.txt|
-    • `arr`     specializes in arrays and sequences       |nvim-lib-arr.txt|
-
-  They all take a table as first argument, so they can be used as methods with
-  the `:` notation.
-
-  Differently from |vim.tbl_|* functions, they can change the table in-place,
-  and {fn} is called with `(key, value)`, not only with `(value)`.
-  Also, they never do table validation. You're responsible for that.
-
-  Some functions have an `iter` parameter, meaning they accept an iterator
-  function, default is |pairs|.
-
-    function    arguments       notes~
+    function    arguments       notes ~
     ---------------------------------------------------------~
     `spairs`       t, comp              iterator that returns sorted pairs
     `map`          t, fn, new, iter     map {t} with {fn}
@@ -194,7 +211,7 @@ MODULE - ARR                                                    *nvim-lib-arr*
   Some functions have an `iter` parameter, meaning they accept an iterator
   function, default is |ipairs|.
 
-    function        arguments         notes~
+    function        arguments         notes ~
     ---------------------------------------------------------~
     `npairs`          t                 iterator that doesn't skip nil values
     `range`           n, m, step        cf. |range()|

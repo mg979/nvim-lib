@@ -1,4 +1,4 @@
-*nvim-lib-tables* Convenient tables for nvim.
+*nvim-lib-extras* Easy access of registers, marks and keycodes.
 
 
 REGISTERS TABLE                                           *nvim-lib-registers*
@@ -14,7 +14,7 @@ nvim.reg[{register}]
     nvim.reg('"', text, "b")    -- set register to text, and set register type
 <
   `nvim.reg` also understands the following expressions:
-        key                same as~
+        key                same as ~
       nvim.reg.unnamed   |getreg|('"')
       nvim.reg.delete    |getreg|('-')
       nvim.reg.colon     |getreg|(':')
