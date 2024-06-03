@@ -11,14 +11,13 @@
 
 local fn = vim.fn
 local api = require('nvim-lib').api
-local tbl = require('nvim-lib').tbl
 local nvim = {}
 
 -------------------------------------------------------------------------------
 -- Similar to the `:put` ex command, accepts a table of lines and the same
 -- options as for nvim_put, plus a `reindent` option.
 function nvim.put(lines, o)
-  o = tbl.merge({
+  o = require('nvim-lib').tbl.merge({
     type = 'l',
     after = true,
     follow = true,
@@ -130,7 +129,7 @@ function nvim.echo(o, o2)
   elseif o.lines then
     chunks = { { table.concat(o.lines, '\n'), hl } }
   elseif o.chunks and hl then -- map chunks with a default highlight
-    chunks = tbl.map(o.chunks, function(_, v)
+    chunks = require('nvim-lib').tbl.map(o.chunks, function(_, v)
       return { v[1], v[2] or hl }
     end)
   end
@@ -225,6 +224,9 @@ function nvim.popup(o, wid)
       end,
       once = true,
     })
+  end
+  for _, v in ipairs(o.mappings or {}) do
+    vim.keymap.set(v[1], v[2], v[3], require("nvim-lib").tbl.merge(v[4] or {}, { buffer = buf }))
   end
   return buf, win, api.win_get_config(win)
 end
